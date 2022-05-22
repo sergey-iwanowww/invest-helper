@@ -1,0 +1,35 @@
+version: '2.4'
+services:
+
+  invest-nginx:
+    image: nginx:alpine
+    container_name: invest-nginx
+    hostname: invest-nginx
+    restart: always
+    ports:
+      - "50080:80"
+    networks:
+      - invest
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../../../front/invest-console/build:/usr/share/nginx/html/invest-console:ro
+
+  invest-db:
+    image: postgres:9.6
+    container_name: invest-db
+    hostname: invest-db
+    restart: always
+    ports:
+      - "55432:5432"
+    environment:
+      POSTGRES_USER: invest
+      POSTGRES_PASSWORD: invest
+    volumes:
+      - "./deploy/invest-db:/var/lib/postgresql/data"
+    networks:
+      - invest
+
+networks:
+  invest:
+
+

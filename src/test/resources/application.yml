@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/investtest
+    driver-class-name: org.postgresql.Driver
+    username: investtest
+    password: investtest
+
+logging:
+  level:
+    root: INFO
+    ru.isg: DEBUG
+
+tinkoff-api:
+  url: https://api-invest.tinkoff.ru
+  path: /openapi/sandbox
+  token: XXX

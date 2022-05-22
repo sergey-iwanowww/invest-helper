@@ -1,0 +1,35 @@
+version: '2.4'
+services:
+
+  invest-nginx:
+    extends:
+      service: invest-nginx
+      file: ./docker-compose.yml
+
+  invest-db:
+    extends:
+      service: invest-db
+      file: ./docker-compose.yml
+
+  invest-helper:
+    image: invest/helper
+    container_name: invest-helper
+    restart: always
+    ports:
+      - "58080:8080"
+    environment:
+      SPRING_CONFIG_NAME: "application"
+      SPRING_CONFIG_LOCATION: "file:///config/"
+    volumes:
+      - "./deploy/invest-helper/config:/config"
+      - "./deploy/invest-helper/logs:/logs"
+      - "./deploy/invest-helper/data:/data"
+    networks:
+      - invest
+    depends_on:
+      - invest-db
+
+networks:
+  invest:
+
+
