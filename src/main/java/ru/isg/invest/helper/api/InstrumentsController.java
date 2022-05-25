@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.isg.invest.helper.dto.CreateInstrumentRequest;
 import ru.isg.invest.helper.dto.InstrumentDto;
+import ru.isg.invest.helper.repositories.InstrumentRepository;
+import ru.isg.invest.helper.services.CandlesImporter;
 import ru.isg.invest.helper.services.InstrumentService;
 
 import javax.validation.Valid;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static ru.isg.invest.helper.model.TimeFrames.ONE_DAY;
 
 /**
  * Created by s.ivanov on 14.11.2021.
@@ -25,6 +30,12 @@ public class InstrumentsController {
 
     @Autowired
     private InstrumentService instrumentService;
+
+    @Autowired
+    private InstrumentRepository instrumentRepository;
+
+    @Autowired
+    private CandlesImporter candlesImporter;
 
     @PostMapping
     public ResponseEntity<Void> createInstrument(@RequestBody @Valid CreateInstrumentRequest createInstrumentRequest) {
@@ -47,6 +58,15 @@ public class InstrumentsController {
         instrumentService.loadInstrumentsFromTinkoffJson(new FileInputStream("/data/tinkoff-currencies.json"));
         instrumentService.loadInstrumentsFromTinkoffJson(new FileInputStream("/data/tinkoff-etfs.json"));
         instrumentService.loadInstrumentsFromTinkoffJson(new FileInputStream("/data/tinkoff-stocks.json"));
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/import")
+    public ResponseEntity<Void> importInstruments() {
+
+        candlesImporter.importCandles(instrumentRepository.findByTicker("SBER").get(), ONE_DAY,
+                LocalDateTime.now().minusDays(10), LocalDateTime.now());
 
         return ResponseEntity.ok().build();
     }

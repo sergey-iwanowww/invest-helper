@@ -16,7 +16,6 @@ pf-man:
     base:
       path: ./
 
-tinkoff-api:
-  url: https://api-invest.tinkoff.ru
-  path: /openapi/sandbox
-  token: XXX
+tinkoff:
+  api:
+    token: XXX
