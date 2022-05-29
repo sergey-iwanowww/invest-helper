@@ -34,12 +34,11 @@ import static com.google.common.collect.Lists.newArrayList;
 public class Source {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @Setter
     @ManyToMany
-    @JoinTable(name = "source_authors",
+    @JoinTable(name = "source_author_links",
             joinColumns = {@JoinColumn(name = "source_id")},
             inverseJoinColumns = {@JoinColumn(name = "author_id")})
     private List<Author> authors = newArrayList();

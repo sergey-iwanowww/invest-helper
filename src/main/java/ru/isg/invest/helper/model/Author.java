@@ -8,8 +8,6 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
@@ -32,8 +30,7 @@ public class Author {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @Setter
     @Column(nullable = false)

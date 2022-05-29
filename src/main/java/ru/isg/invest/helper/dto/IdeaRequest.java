@@ -2,10 +2,11 @@ package ru.isg.invest.helper.dto;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.isg.invest.helper.model.ConceptTypes;
+import ru.isg.invest.helper.model.IdeaConceptTypes;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,11 +25,11 @@ public class IdeaRequest {
     private IdeaTriggerData finishTrigger;
 
     @NotNull
-    private ConceptTypes conceptType;
+    private IdeaConceptTypes conceptType;
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate generatedDate;
+    private LocalDateTime generatedDate;
 
     @NotNull
     private UUID sourceId;

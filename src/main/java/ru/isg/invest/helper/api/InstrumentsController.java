@@ -11,6 +11,7 @@ import ru.isg.invest.helper.dto.CreateInstrumentRequest;
 import ru.isg.invest.helper.dto.InstrumentDto;
 import ru.isg.invest.helper.repositories.InstrumentRepository;
 import ru.isg.invest.helper.services.CandlesImporter;
+import ru.isg.invest.helper.services.IdeasChecker;
 import ru.isg.invest.helper.services.InstrumentService;
 
 import javax.validation.Valid;
@@ -19,7 +20,11 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.isg.invest.helper.model.TimeFrames.FIVE_MINUTES;
 import static ru.isg.invest.helper.model.TimeFrames.ONE_DAY;
+import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
+import static ru.isg.invest.helper.model.TimeFrames.ONE_MONTH;
+import static ru.isg.invest.helper.model.TimeFrames.ONE_WEEK;
 
 /**
  * Created by s.ivanov on 14.11.2021.
@@ -36,6 +41,9 @@ public class InstrumentsController {
 
     @Autowired
     private CandlesImporter candlesImporter;
+
+    @Autowired
+    private IdeasChecker ideasChecker;
 
     @PostMapping
     public ResponseEntity<Void> createInstrument(@RequestBody @Valid CreateInstrumentRequest createInstrumentRequest) {
@@ -65,8 +73,17 @@ public class InstrumentsController {
     @PostMapping(path = "/import")
     public ResponseEntity<Void> importInstruments() {
 
-        candlesImporter.importCandles(instrumentRepository.findByTicker("SBER").get(), ONE_DAY,
-                LocalDateTime.now().minusDays(10), LocalDateTime.now());
+        candlesImporter.importCandles(instrumentRepository.findByTicker("SBER").get(), ONE_HOUR,
+                LocalDateTime.of(2022, 5, 1, 0, 0, 0),
+                LocalDateTime.of(2022, 6, 1, 0, 0, 0));
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/ideas")
+    public ResponseEntity<Void> ideas() {
+
+        ideasChecker.check();
 
         return ResponseEntity.ok().build();
     }

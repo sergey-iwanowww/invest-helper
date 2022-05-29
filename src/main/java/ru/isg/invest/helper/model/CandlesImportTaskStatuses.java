@@ -5,6 +5,6 @@ package ru.isg.invest.helper.model;
  */
 public enum CandlesImportTaskStatuses {
     ACTIVE,
-    IN_PROGRESS,
+    PROCESSING,
     DONE
 }

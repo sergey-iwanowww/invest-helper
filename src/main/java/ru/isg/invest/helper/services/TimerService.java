@@ -15,6 +15,7 @@ public class TimerService {
 
     private final MonitoredInstrumentsChecker monitoredInstrumentsChecker;
     private final CandlesImportTasksChecker candlesImportTasksChecker;
+    private final IdeasChecker ideasChecker;
 
 //    @Scheduled(cron = "")
     public void checkMonitoredCandles() {
@@ -26,5 +27,11 @@ public class TimerService {
     public void checkCandlesImportTasks() {
         log.info("Запуск проверки задач на импорт свечей");
         candlesImportTasksChecker.check();
+    }
+
+    //    @Scheduled(cron = "")
+    public void checkIdeas() {
+        log.info("Запуск проверки идей");
+        ideasChecker.check();
     }
 }

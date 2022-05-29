@@ -11,10 +11,10 @@ import ru.isg.invest.helper.repositories.MonitoredInstrumentRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static java.time.DayOfWeek.MONDAY;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static java.time.temporal.ChronoUnit.MONTHS;
-import static java.time.temporal.ChronoUnit.WEEKS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
 /**
@@ -57,9 +57,9 @@ public class MonitoredInstrumentsChecker {
     }
 
     private LocalDateTime getFirstCandleFrom(TimeFrames timeFrame) {
-        LocalDateTime curDate = LocalDateTime.now().truncatedTo(DAYS);
+        LocalDateTime curDate = LocalDateTime.now().truncatedTo(DAYS).withHour(7);
         return switch (timeFrame) {
-            case FIVE_MINS -> curDate.minus(1, MONTHS);
+            case FIVE_MINUTES -> curDate.minus(1, MONTHS);
             case ONE_HOUR -> curDate.minus(2, MONTHS);
             case ONE_DAY -> curDate.minus(1, YEARS);
             case ONE_WEEK -> curDate.minus(5, YEARS);
@@ -69,12 +69,18 @@ public class MonitoredInstrumentsChecker {
 
     private LocalDateTime truncateDateToTimeFrame(LocalDateTime date, TimeFrames timeFrame) {
         return switch (timeFrame) {
-            case FIVE_MINS -> LocalDateTime.of(date.getYear(), date.getMonth(), date.getDayOfMonth(),
+            case FIVE_MINUTES -> LocalDateTime.of(date.getYear(), date.getMonth(), date.getDayOfMonth(),
                     date.getHour(), date.getMinute() / 5 * 5);
             case ONE_HOUR -> date.truncatedTo(HOURS);
-            case ONE_DAY -> date.truncatedTo(DAYS);
-            case ONE_WEEK -> date.truncatedTo(WEEKS);
-            case ONE_MONTH -> date.truncatedTo(MONTHS);
+            case ONE_DAY -> date.truncatedTo(DAYS).withHour(7);
+            case ONE_WEEK -> {
+                var tmpDate = date.truncatedTo(DAYS);
+                while (tmpDate.getDayOfWeek() != MONDAY) {
+                    tmpDate = tmpDate.minusDays(1);
+                }
+                yield tmpDate.withHour(7);
+            }
+            case ONE_MONTH -> date.truncatedTo(DAYS).withDayOfMonth(1).withHour(7);
         };
     }
 }

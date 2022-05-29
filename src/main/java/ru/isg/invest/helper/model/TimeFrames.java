@@ -16,7 +16,7 @@ import static java.time.temporal.ChronoUnit.WEEKS;
 @Getter
 public enum TimeFrames {
 
-    FIVE_MINS(MINUTES, 5),
+    FIVE_MINUTES(MINUTES, 5),
     ONE_HOUR(HOURS, 1),
     ONE_DAY(DAYS, 1),
     ONE_WEEK(WEEKS, 1),

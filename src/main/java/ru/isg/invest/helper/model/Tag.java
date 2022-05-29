@@ -25,8 +25,7 @@ import java.util.UUID;
 public class Tag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @Setter
     private String name;

@@ -7,8 +7,6 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,7 +18,7 @@ import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 import static ru.isg.invest.helper.model.CandlesImportTaskStatuses.ACTIVE;
 import static ru.isg.invest.helper.model.CandlesImportTaskStatuses.DONE;
-import static ru.isg.invest.helper.model.CandlesImportTaskStatuses.IN_PROGRESS;
+import static ru.isg.invest.helper.model.CandlesImportTaskStatuses.PROCESSING;
 
 /**
  * Created by s.ivanov on 5/22/22.
@@ -40,8 +38,7 @@ public class CandlesImportTask {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @ManyToOne
     @JoinColumn(name = "instrument_id", nullable = false)
@@ -57,8 +54,7 @@ public class CandlesImportTask {
     @Column(nullable = false)
     private LocalDateTime dateTo;
 
-    @Setter
-    private LocalDateTime lastImportedCandleDateFrom;
+    private LocalDateTime lastCompletedCandleDate;
 
     @Setter
     @Enumerated(STRING)
@@ -67,11 +63,14 @@ public class CandlesImportTask {
     private LocalDateTime createdDate;
 
     public void processingStarted() {
-        this.status = IN_PROGRESS;
+        this.status = PROCESSING;
     }
 
-    public void processingFinished() {
-        if (lastImportedCandleDateFrom.plus(timeFrame.getAmount(), timeFrame.getChronoUnit()).compareTo(dateTo) >= 0) {
+    public void processingFinished(LocalDateTime lastCompletedCandleDate) {
+
+        this.lastCompletedCandleDate = lastCompletedCandleDate;
+
+        if (lastCompletedCandleDate.plus(timeFrame.getAmount(), timeFrame.getChronoUnit()).compareTo(dateTo) >= 0) {
             status = DONE;
         } else {
             status = ACTIVE;

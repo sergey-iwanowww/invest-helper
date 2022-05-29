@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.isg.invest.helper.dto.IdeaDto;
 import ru.isg.invest.helper.dto.IdeaRequest;
@@ -14,6 +15,7 @@ import ru.isg.invest.helper.model.Idea;
 import ru.isg.invest.helper.model.IdeaTrigger;
 import ru.isg.invest.helper.model.PriceIdeaTrigger;
 import ru.isg.invest.helper.repositories.IdeaRepository;
+import ru.isg.invest.helper.repositories.IdeaTriggerRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 public class IdeasService {
 
     private final IdeaRepository ideaRepository;
+    private final IdeaTriggerRepository ideaTriggerRepository;
     private final InstrumentService instrumentService;
     private final SourceService sourceService;
     private final AuthorService authorService;
@@ -43,16 +46,22 @@ public class IdeasService {
     @Value("${pf-man.images.base.path:/data/images}")
     private String IMAGES_BASE_PATH;
 
+    @Transactional
     public IdeaDto createIdea(IdeaRequest ideaRequest) {
 
-        Idea idea = new Idea(instrumentService.getInstrument(ideaRequest.getInstrumentId()),
-                ideaTriggerFromRequest(ideaRequest.getStartTrigger()), ideaRequest.getConceptType(),
-                ideaRequest.getGeneratedDate(), sourceService.getSource(ideaRequest.getSourceId()),
-                authorService.getAuthor(ideaRequest.getAuthorId()));
+        IdeaTrigger startTrigger = ideaTriggerFromRequest(ideaRequest.getStartTrigger());
+        startTrigger = ideaTriggerRepository.save(startTrigger);
 
+        IdeaTrigger finishTrigger = null;
         if (ideaRequest.getFinishTrigger() != null) {
-            idea.setFinishTrigger(ideaTriggerFromRequest(ideaRequest.getFinishTrigger()));
+            finishTrigger = ideaTriggerFromRequest(ideaRequest.getFinishTrigger());
+            finishTrigger = ideaTriggerRepository.save(finishTrigger);
         }
+
+        Idea idea = new Idea(instrumentService.getInstrument(ideaRequest.getInstrumentId()),
+                ideaRequest.getConceptType(), ideaRequest.getGeneratedDate(),
+                sourceService.getSource(ideaRequest.getSourceId()),
+                authorService.getAuthor(ideaRequest.getAuthorId()));
 
         if (ideaRequest.getTagIds() != null) {
             idea.setTags(ideaRequest.getTagIds().stream()
@@ -62,6 +71,17 @@ public class IdeasService {
         }
 
         idea.setText(ideaRequest.getText());
+
+        idea = ideaRepository.save(idea);
+
+        idea.setStartTrigger(startTrigger);
+
+        if (finishTrigger != null) {
+            idea.setFinishTrigger(finishTrigger);
+        }
+
+        ideaTriggerRepository.save(startTrigger);
+        ideaTriggerRepository.save(finishTrigger);
 
         return ideaToDto(ideaRepository.save(idea));
     }
@@ -84,8 +104,8 @@ public class IdeasService {
                 .setSource(sourceService.sourceToDto(idea.getSource()))
                 .setAuthor(authorService.authorToDto(idea.getAuthor()))
                 .setText(idea.getText())
-                .setStartedDate(idea.getStartedDate())
-                .setStartedPrice(idea.getStartedPrice())
+                .setActivatedDate(idea.getActivatedDate())
+                .setActivatedPrice(idea.getActivatedPrice())
                 .setFinishedDate(idea.getFinishedDate())
                 .setFinishedPrice(idea.getFinishedPrice());
 
@@ -169,7 +189,9 @@ public class IdeasService {
     }
 
     public IdeaDto getIdea(UUID ideaId) {
-        return ideaToDto(getIdeaEntity(ideaId));
+        Idea idea = getIdeaEntity(ideaId);
+        log.info("" + idea);
+        return ideaToDto(idea);
     }
 
     public Idea getIdeaEntity(UUID ideaId) {
@@ -185,8 +207,9 @@ public class IdeasService {
         if (ideaTriggerData.getDate() != null) {
             return new DateIdeaTrigger(ideaTriggerData.getDate());
         } else if (ideaTriggerData.getPrice() != null) {
-            return new PriceIdeaTrigger(ideaTriggerData.getPrice(),
-                    ideaTriggerData.getWithRetest() != null && ideaTriggerData.getWithRetest());
+            return new PriceIdeaTrigger(ideaTriggerData.getPrice(), ideaTriggerData.getDelta(),
+                    ideaTriggerData.getWithRetest() != null && ideaTriggerData.getWithRetest(),
+                    ideaTriggerData.getMonitoringTimeFrame());
         } else {
             throw new IllegalArgumentException("Trigger data is incorrect");
         }

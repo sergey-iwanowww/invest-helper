@@ -9,5 +9,5 @@ import java.time.LocalDateTime;
  */
 @Value
 public class ImportCandlesResult {
-    LocalDateTime lastImportedCandleDateFrom;
+    LocalDateTime lastCompletedCandleDate;
 }

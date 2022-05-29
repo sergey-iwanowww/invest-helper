@@ -3,7 +3,7 @@ package ru.isg.invest.helper.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ru.isg.invest.helper.model.ConceptTypes;
+import ru.isg.invest.helper.model.IdeaConceptTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,15 +22,15 @@ public class IdeaDto {
     private InstrumentDto instrument;
     private IdeaTriggerDto startTrigger;
     private IdeaTriggerDto finishTrigger;
-    private ConceptTypes conceptType;
-    private LocalDate generatedDate;
+    private IdeaConceptTypes conceptType;
+    private LocalDateTime generatedDate;
     private SourceDto source;
     private AuthorDto author;
     private String text;
     private String imageUrl;
     private List<TagDto> tags;
-    private LocalDateTime startedDate;
-    private BigDecimal startedPrice;
+    private LocalDateTime activatedDate;
+    private BigDecimal activatedPrice;
     private LocalDateTime finishedDate;
     private BigDecimal finishedPrice;
 }

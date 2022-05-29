@@ -2,7 +2,9 @@ package ru.isg.invest.helper.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.isg.invest.helper.model.Idea;
+import ru.isg.invest.helper.model.IdeaStatuses;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,4 +12,5 @@ import java.util.UUID;
  */
 public interface IdeaRepository extends JpaRepository<Idea, UUID> {
 
+    List<Idea> getIdeasByStatusIn(List<IdeaStatuses> statuses);
 }

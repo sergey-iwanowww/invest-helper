@@ -30,9 +30,7 @@ public class CandlesImportTasksChecker {
         ImportCandlesResult result = candlesImporter.importCandles(task.getInstrument(), task.getTimeFrame(),
                 task.getDateFrom(), task.getDateTo());
 
-        task.setLastImportedCandleDateFrom(result.getLastImportedCandleDateFrom());
-
-        task.processingFinished();
+        task.processingFinished(result.getLastCompletedCandleDate());
 
         candlesImportTaskRepository.save(task);
     }
