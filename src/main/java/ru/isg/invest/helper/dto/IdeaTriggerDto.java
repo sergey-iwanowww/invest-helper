@@ -3,6 +3,8 @@ package ru.isg.invest.helper.dto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.isg.invest.helper.model.IdeaTriggerStatuses;
+import ru.isg.invest.helper.model.TimeFrames;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,5 +20,13 @@ public class IdeaTriggerDto {
     LocalDateTime date;
 
     BigDecimal price;
+    BigDecimal delta;
     Boolean withRetest;
+    TimeFrames monitoringTimeFrame;
+
+    IdeaTriggerStatuses status;
+
+    LocalDateTime waitingForActivationSettedDate;
+    LocalDateTime preactivatedDate;
+    LocalDateTime activatedDate;
 }

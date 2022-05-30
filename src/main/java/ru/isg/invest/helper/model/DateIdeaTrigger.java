@@ -2,7 +2,6 @@ package ru.isg.invest.helper.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import ru.isg.invest.helper.services.IdeaTriggerVisitor;
 
@@ -15,9 +14,7 @@ import java.util.function.Consumer;
 import static com.google.common.base.Preconditions.checkState;
 import static lombok.AccessLevel.PROTECTED;
 import static ru.isg.invest.helper.model.IdeaTriggerStatuses.ACTIVATED;
-import static ru.isg.invest.helper.model.IdeaTriggerStatuses.NEW;
 import static ru.isg.invest.helper.model.IdeaTriggerStatuses.WAITING_FOR_ACTIVATION;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
 
 /**
  * Created by s.ivanov on 06.01.2022.
@@ -25,7 +22,6 @@ import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
 @Entity
 @Accessors(chain = true)
 @Getter
-@ToString(callSuper = true)
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("DATE")
 public class DateIdeaTrigger extends IdeaTrigger {

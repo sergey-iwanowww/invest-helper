@@ -3,15 +3,12 @@ package ru.isg.invest.helper.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -30,7 +27,6 @@ import static com.google.common.collect.Lists.newArrayList;
 @Getter
 @Accessors(chain = true)
 @NoArgsConstructor
-@ToString
 public class Source {
 
     @Id

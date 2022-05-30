@@ -86,6 +86,7 @@ public class IdeasService {
         return ideaToDto(ideaRepository.save(idea));
     }
 
+    @Transactional
     public List<IdeaDto> listIdeas() {
         return ideaRepository.findAll().stream()
                 .map(this::ideaToDto)
@@ -107,7 +108,11 @@ public class IdeasService {
                 .setActivatedDate(idea.getActivatedDate())
                 .setActivatedPrice(idea.getActivatedPrice())
                 .setFinishedDate(idea.getFinishedDate())
-                .setFinishedPrice(idea.getFinishedPrice());
+                .setFinishedPrice(idea.getFinishedPrice())
+                .setCancelledDate(idea.getCancelledDate())
+                .setCancelledPrice(idea.getCancelledPrice())
+                .setCreatedDate(idea.getCreatedDate())
+                .setStatus(idea.getStatus());
 
         if (StringUtils.hasText(idea.getImagePath())) {
             ideaDto.setImageUrl(generateImageUrl(idea));
@@ -160,6 +165,7 @@ public class IdeasService {
         }
     }
 
+    @Transactional
     public IdeaDto updateIdea(UUID id, IdeaRequest ideaRequest) {
 
         Idea idea = getIdeaEntity(id);
@@ -188,9 +194,9 @@ public class IdeasService {
         return ideaToDto(ideaRepository.save(idea));
     }
 
+    @Transactional
     public IdeaDto getIdea(UUID ideaId) {
         Idea idea = getIdeaEntity(ideaId);
-        log.info("" + idea);
         return ideaToDto(idea);
     }
 
@@ -221,16 +227,26 @@ public class IdeasService {
             return null;
         }
 
+        IdeaTriggerDto result = null;
+
         // TODO: hibernate instanceof problem
         if (ideaTrigger instanceof DateIdeaTrigger dateIdeaTrigger) {
-            return new IdeaTriggerDto()
+            result = new IdeaTriggerDto()
                     .setDate(dateIdeaTrigger.getDate());
         } else if (ideaTrigger instanceof PriceIdeaTrigger priceIdeaTrigger) {
-            return new IdeaTriggerDto()
+            result = new IdeaTriggerDto()
                     .setPrice(priceIdeaTrigger.getPrice())
-                    .setWithRetest(priceIdeaTrigger.isWithRetest());
+                    .setWithRetest(priceIdeaTrigger.isWithRetest())
+                    .setDelta(priceIdeaTrigger.getDelta())
+                    .setMonitoringTimeFrame(priceIdeaTrigger.getMonitoringTimeFrame());
         } else {
             throw new IllegalArgumentException("Trigger type not supported");
         }
+
+        return result
+                .setStatus(ideaTrigger.getStatus())
+                .setWaitingForActivationSettedDate(ideaTrigger.getWaitingForActivationSettedDate())
+                .setPreactivatedDate(ideaTrigger.getPreactivatedDate())
+                .setActivatedDate(ideaTrigger.getActivatedDate());
     }
 }

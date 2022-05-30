@@ -3,7 +3,6 @@ package ru.isg.invest.helper.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import ru.isg.invest.helper.services.IdeaTriggerVisitor;
 
@@ -11,14 +10,10 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,7 +32,6 @@ import static ru.isg.invest.helper.model.IdeaTriggerStatuses.WAITING_FOR_ACTIVAT
 @Table(name = "idea_triggers")
 @Accessors(chain = true)
 @Getter
-@ToString
 @Inheritance(strategy = SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @NoArgsConstructor(access = PROTECTED)

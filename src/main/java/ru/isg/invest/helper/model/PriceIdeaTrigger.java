@@ -2,7 +2,6 @@ package ru.isg.invest.helper.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import ru.isg.invest.helper.services.IdeaTriggerVisitor;
 
@@ -28,7 +27,6 @@ import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
 @Entity
 @Accessors(chain = true)
 @Getter
-@ToString(callSuper = true)
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("PRICE")
 public class PriceIdeaTrigger extends IdeaTrigger {

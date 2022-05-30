@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/investtest
+    url: jdbc:postgresql://localhost:55432/investtest
     driver-class-name: org.postgresql.Driver
     username: investtest
     password: investtest
@@ -9,8 +9,13 @@ logging:
   level:
     root: INFO
     ru.isg: DEBUG
+    org.hibernate.SQL: DEBUG
 
-tinkoff-api:
-  url: https://api-invest.tinkoff.ru
-  path: /openapi/sandbox
-  token: XXX
+pf-man:
+  images:
+    base:
+      path: ./
+
+tinkoff:
+  api:
+    token: XXX

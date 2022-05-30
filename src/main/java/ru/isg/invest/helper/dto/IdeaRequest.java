@@ -1,6 +1,7 @@
 package ru.isg.invest.helper.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.isg.invest.helper.model.IdeaConceptTypes;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
  * Created by s.ivanov on 14.11.2021.
  */
 @Data
+@Accessors(chain = true)
 public class IdeaRequest {
 
     @NotNull

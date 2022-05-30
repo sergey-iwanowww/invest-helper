@@ -3,7 +3,6 @@ package ru.isg.invest.helper.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
@@ -21,7 +20,6 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "authors")
 @Getter
 @Accessors(chain = true)
-@ToString
 @NoArgsConstructor(access = PROTECTED)
 public class Author {
 

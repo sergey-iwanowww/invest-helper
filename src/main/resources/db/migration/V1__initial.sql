@@ -18,7 +18,7 @@ create table public.idea_triggers
     delta                              numeric(11, 4),
     with_retest                        boolean default false,
     type                               character varying(32) not null,
-    idea_id                            uuid                  not null,
+    idea_id                            uuid,
     status                             varchar(32)           not null,
     waiting_for_activation_setted_date timestamp,
     preactivated_date                  timestamp,

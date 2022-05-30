@@ -1,6 +1,7 @@
 package ru.isg.invest.helper.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.isg.invest.helper.model.TimeFrames;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
  * Created by s.ivanov on 14.11.2021.
  */
 @Data
+@Accessors(chain = true)
 public class IdeaTriggerData {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

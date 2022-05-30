@@ -3,7 +3,6 @@ package ru.isg.invest.helper.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
@@ -36,7 +35,6 @@ import static ru.isg.invest.helper.model.IdeaStatuses.WAITING_FOR_ACTIVATION;
 @Table(name = "ideas")
 @Getter
 @Accessors(chain = true)
-@ToString
 @NoArgsConstructor(access = PROTECTED)
 public class Idea {
 

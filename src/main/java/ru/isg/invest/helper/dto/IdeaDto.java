@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.isg.invest.helper.model.IdeaConceptTypes;
+import ru.isg.invest.helper.model.IdeaStatuses;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -33,4 +33,8 @@ public class IdeaDto {
     private BigDecimal activatedPrice;
     private LocalDateTime finishedDate;
     private BigDecimal finishedPrice;
+    private LocalDateTime createdDate;
+    private LocalDateTime cancelledDate;
+    private BigDecimal cancelledPrice;
+    private IdeaStatuses status;
 }
