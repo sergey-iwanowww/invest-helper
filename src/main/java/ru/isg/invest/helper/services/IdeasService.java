@@ -75,13 +75,12 @@ public class IdeasService {
         idea = ideaRepository.save(idea);
 
         idea.setStartTrigger(startTrigger);
+        ideaTriggerRepository.save(startTrigger);
 
         if (finishTrigger != null) {
             idea.setFinishTrigger(finishTrigger);
+            ideaTriggerRepository.save(finishTrigger);
         }
-
-        ideaTriggerRepository.save(startTrigger);
-        ideaTriggerRepository.save(finishTrigger);
 
         return ideaToDto(ideaRepository.save(idea));
     }

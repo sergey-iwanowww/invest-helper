@@ -1,6 +1,7 @@
 package ru.isg.invest.helper.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.isg.invest.helper.model.TimeFrames;
@@ -13,7 +14,18 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
+@NoArgsConstructor
 public class IdeaTriggerData {
+
+    public IdeaTriggerData(LocalDateTime date, TimeFrames monitoringTimeFrame) {
+        this.date = date;
+        this.monitoringTimeFrame = monitoringTimeFrame;
+    }
+
+    public IdeaTriggerData(BigDecimal price, TimeFrames monitoringTimeFrame) {
+        this.price = price;
+        this.monitoringTimeFrame = monitoringTimeFrame;
+    }
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime date;

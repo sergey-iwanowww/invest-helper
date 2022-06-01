@@ -191,17 +191,19 @@ public class IdeasChecker {
     private void processActiveIdea(Idea idea) {
 
         IdeaTrigger finishTrigger = idea.getFinishTrigger();
+        if (finishTrigger != null) {
+            finishTrigger.acceptVisitor(new IdeaTriggerVisitor() {
+                @Override
+                public void visitDataIdeaTrigger(DateIdeaTrigger dateIdeaTrigger) {
+                    processFinishDateIdeaTrigger(dateIdeaTrigger);
+                }
 
-        finishTrigger.acceptVisitor(new IdeaTriggerVisitor() {
-            @Override
-            public void visitDataIdeaTrigger(DateIdeaTrigger dateIdeaTrigger) {
-                processFinishDateIdeaTrigger(dateIdeaTrigger);
-            }
-            @Override
-            public void visitPriceIdeaTrigger(PriceIdeaTrigger priceIdeaTrigger) {
-                processFinishPriceIdeaTrigger(priceIdeaTrigger);
-            }
-        });
+                @Override
+                public void visitPriceIdeaTrigger(PriceIdeaTrigger priceIdeaTrigger) {
+                    processFinishPriceIdeaTrigger(priceIdeaTrigger);
+                }
+            });
+        }
     }
 
     private void processFinishDateIdeaTrigger(DateIdeaTrigger trigger) {

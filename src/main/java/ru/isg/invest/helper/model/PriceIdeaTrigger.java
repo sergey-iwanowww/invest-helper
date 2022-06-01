@@ -73,6 +73,6 @@ public class PriceIdeaTrigger extends IdeaTrigger {
         this.activatedDate = LocalDateTime.now();
         this.status = ACTIVATED;
 
-//        ideaConsumer.accept(this.idea);
+        ideaConsumer.accept(this.idea);
     }
 }
