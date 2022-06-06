@@ -32,4 +32,13 @@ public interface CandleRepository extends JpaRepository<Candle, UUID> {
     @Query("select c from Candle c where c.instrument.id = :instrumentId and c.timeFrame = :timeFrame "
             + " and c.closeDate >= :closeDateFrom and c.complete = true")
     List<Candle> getCandles2(UUID instrumentId, TimeFrames timeFrame, LocalDateTime closeDateFrom);
+
+    /**
+     * Отбирает свечи по инструменту, таймфрейму, если свеча завершена и дата закрытия свечи не ранее указанной даты От
+     * и ранее даты До.
+     */
+    @Query("select c from Candle c where c.instrument.id = :instrumentId and c.timeFrame = :timeFrame "
+            + " and c.closeDate >= :closeDateFrom and c.closeDate < :closeDateTo and c.complete = true")
+    List<Candle> getCandlesNew(UUID instrumentId, TimeFrames timeFrame, LocalDateTime closeDateFrom,
+            LocalDateTime closeDateTo);
 }

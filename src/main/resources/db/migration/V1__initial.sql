@@ -21,7 +21,6 @@ create table public.idea_triggers
     idea_id                            uuid,
     status                             varchar(32)           not null,
     waiting_for_activation_setted_date timestamp,
-    preactivated_date                  timestamp,
     activated_date                     timestamp,
     monitoring_time_frame              varchar(32)
 );

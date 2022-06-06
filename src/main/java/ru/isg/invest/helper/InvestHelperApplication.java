@@ -13,5 +13,4 @@ public class InvestHelperApplication {
     public static void main(String[] args) {
         SpringApplication.run(InvestHelperApplication.class, args);
     }
-
 }

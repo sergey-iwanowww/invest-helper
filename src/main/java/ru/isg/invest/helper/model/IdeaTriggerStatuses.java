@@ -6,6 +6,5 @@ package ru.isg.invest.helper.model;
 public enum IdeaTriggerStatuses {
     NEW,
     WAITING_FOR_ACTIVATION,
-    PRE_ACTIVATED,
     ACTIVATED
 }

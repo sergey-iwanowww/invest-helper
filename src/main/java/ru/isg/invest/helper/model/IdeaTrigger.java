@@ -15,13 +15,16 @@ import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.InheritanceType.SINGLE_TABLE;
 import static lombok.AccessLevel.PROTECTED;
+import static ru.isg.invest.helper.model.IdeaTriggerStatuses.ACTIVATED;
 import static ru.isg.invest.helper.model.IdeaTriggerStatuses.NEW;
 import static ru.isg.invest.helper.model.IdeaTriggerStatuses.WAITING_FOR_ACTIVATION;
 
@@ -51,8 +54,6 @@ public abstract class IdeaTrigger {
 
     protected LocalDateTime waitingForActivationSettedDate;
 
-    protected LocalDateTime preactivatedDate;
-
     protected LocalDateTime activatedDate;
 
     public abstract void acceptVisitor(IdeaTriggerVisitor ideaTriggerVisitor);
@@ -62,5 +63,16 @@ public abstract class IdeaTrigger {
                 "Неподходящий статус для перевода в статус ожидания активации: %s", this.status);
         this.waitingForActivationSettedDate = LocalDateTime.now();
         this.status = WAITING_FOR_ACTIVATION;
+    }
+
+    public void activate(LocalDateTime activatedDate, BigDecimal activatedPrice) {
+
+        checkState(this.status == WAITING_FOR_ACTIVATION,
+                "Неподходящий статус для активации: %s", this.status);
+
+        this.activatedDate = LocalDateTime.now();
+        this.status = ACTIVATED;
+
+        idea.processTriggerActivation(this, activatedDate, activatedPrice);
     }
 }

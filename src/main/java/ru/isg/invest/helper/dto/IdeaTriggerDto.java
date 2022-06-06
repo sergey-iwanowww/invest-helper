@@ -27,6 +27,5 @@ public class IdeaTriggerDto {
     IdeaTriggerStatuses status;
 
     LocalDateTime waitingForActivationSettedDate;
-    LocalDateTime preactivatedDate;
     LocalDateTime activatedDate;
 }

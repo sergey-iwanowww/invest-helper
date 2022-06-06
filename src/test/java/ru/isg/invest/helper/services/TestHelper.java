@@ -13,6 +13,7 @@ import ru.isg.invest.helper.repositories.SourceRepository;
 import ru.isg.invest.helper.repositories.TagRepository;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -59,9 +60,9 @@ public class TestHelper {
     }
 
     public Author getRandomAuthor() {
-        return authorRepository.findAll(PageRequest.of((int) (Math.random() * 4), 1)).stream()
-                .findAny()
-                .orElse(null);
+        List<Author> authors = authorRepository.findAll();
+        Collections.shuffle(authors);
+        return authors.get(0);
     }
 
     private List<Source> createSources() {
@@ -79,9 +80,9 @@ public class TestHelper {
     }
 
     public Source getRandomSource() {
-        return sourceRepository.findAll(PageRequest.of((int) (Math.random() * 4), 1)).stream()
-                .findAny()
-                .orElse(null);
+        List<Source> sources = sourceRepository.findAll();
+        Collections.shuffle(sources);
+        return sources.get(0);
     }
 
     private List<Tag> createTags() {
@@ -96,13 +97,14 @@ public class TestHelper {
     }
 
     public Tag getRandomTag() {
-        return tagRepository.findAll(PageRequest.of((int) (Math.random() * 4), 1)).stream()
-                .findAny()
-                .orElse(null);
+        List<Tag> tags = getRandomTags(1);
+        return tags.get(0);
     }
 
     public List<Tag> getRandomTags(int size) {
-        return tagRepository.findAll(PageRequest.of((int) (Math.random() * size), size)).getContent();
+        List<Tag> tags = tagRepository.findAll();
+        Collections.shuffle(tags);
+        return tags.subList(0, size);
     }
 
     private boolean dbInitializedAlready() {
@@ -129,8 +131,13 @@ public class TestHelper {
     }
 
     public Instrument getRandomInstrument() {
-        return instrumentRepository.findAll(PageRequest.of((int) (Math.random() * 4), 1)).stream()
-                .findAny()
-                .orElse(null);
+        List<Instrument> instruments = getRandomInstruments(1);
+        return instruments.get(0);
+    }
+
+    public List<Instrument> getRandomInstruments(int size) {
+        List<Instrument> instruments = instrumentRepository.findAll();
+        Collections.shuffle(instruments);
+        return instruments.subList(0, size);
     }
 }

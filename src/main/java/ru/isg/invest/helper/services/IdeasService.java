@@ -245,7 +245,6 @@ public class IdeasService {
         return result
                 .setStatus(ideaTrigger.getStatus())
                 .setWaitingForActivationSettedDate(ideaTrigger.getWaitingForActivationSettedDate())
-                .setPreactivatedDate(ideaTrigger.getPreactivatedDate())
                 .setActivatedDate(ideaTrigger.getActivatedDate());
     }
 }

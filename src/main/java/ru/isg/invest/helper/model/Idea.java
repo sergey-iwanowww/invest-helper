@@ -181,4 +181,14 @@ public class Idea {
 
         this.status = CANCELLED;
     }
+
+    public void processTriggerActivation(IdeaTrigger trigger, LocalDateTime activatedDate, BigDecimal activatedPrice) {
+        if (trigger == startTrigger) {
+            activate(activatedDate, activatedPrice);
+        } else if (trigger == finishTrigger) {
+            finish(activatedDate, activatedPrice);
+        } else {
+            throw new IllegalArgumentException("Unknown trigger with id = " + trigger.getId());
+        }
+    }
 }

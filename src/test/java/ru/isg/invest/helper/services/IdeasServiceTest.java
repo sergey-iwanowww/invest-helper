@@ -79,11 +79,9 @@ public class IdeasServiceTest {
         assertEquals(IdeaTriggerStatuses.WAITING_FOR_ACTIVATION, idea.getStartTrigger().getStatus());
         assertNotNull(idea.getStartTrigger().getWaitingForActivationSettedDate());
         assertNull(idea.getStartTrigger().getActivatedDate());
-        assertNull(idea.getStartTrigger().getPreactivatedDate());
 
         assertEquals(IdeaTriggerStatuses.NEW, idea.getFinishTrigger().getStatus());
         assertNull(idea.getFinishTrigger().getWaitingForActivationSettedDate());
         assertNull(idea.getFinishTrigger().getActivatedDate());
-        assertNull(idea.getFinishTrigger().getPreactivatedDate());
     }
 }

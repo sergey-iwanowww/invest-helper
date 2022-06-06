@@ -17,7 +17,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 import static ru.isg.invest.helper.model.IdeaTriggerStatuses.ACTIVATED;
-import static ru.isg.invest.helper.model.IdeaTriggerStatuses.PRE_ACTIVATED;
 import static ru.isg.invest.helper.model.IdeaTriggerStatuses.WAITING_FOR_ACTIVATION;
 import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
 
@@ -54,25 +53,5 @@ public class PriceIdeaTrigger extends IdeaTrigger {
     @Override
     public void acceptVisitor(IdeaTriggerVisitor ideaTriggerVisitor) {
         ideaTriggerVisitor.visitPriceIdeaTrigger(this);
-    }
-
-    public void preActivate() {
-
-        checkState(this.status == WAITING_FOR_ACTIVATION && this.withRetest,
-                "Неподходящий статус для преактивации: %s", this.status);
-
-        this.preactivatedDate = LocalDateTime.now();
-        this.status = PRE_ACTIVATED;
-    }
-
-    public void activate(Consumer<Idea> ideaConsumer) {
-
-        checkState(this.status == WAITING_FOR_ACTIVATION && !this.withRetest || this.status == PRE_ACTIVATED,
-                "Неподходящий статус для активации: %s", this.status);
-
-        this.activatedDate = LocalDateTime.now();
-        this.status = ACTIVATED;
-
-        ideaConsumer.accept(this.idea);
     }
 }
