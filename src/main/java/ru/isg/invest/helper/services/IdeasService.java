@@ -3,10 +3,15 @@ package ru.isg.invest.helper.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.StringUtils;
+import ru.isg.invest.helper.dto.IdeaActivationEvent;
 import ru.isg.invest.helper.dto.IdeaDto;
+import ru.isg.invest.helper.dto.IdeaFinishingEvent;
 import ru.isg.invest.helper.dto.IdeaRequest;
 import ru.isg.invest.helper.dto.IdeaTriggerData;
 import ru.isg.invest.helper.dto.IdeaTriggerDto;
@@ -16,6 +21,7 @@ import ru.isg.invest.helper.model.IdeaTrigger;
 import ru.isg.invest.helper.model.PriceIdeaTrigger;
 import ru.isg.invest.helper.repositories.IdeaRepository;
 import ru.isg.invest.helper.repositories.IdeaTriggerRepository;
+import ru.isg.invest.helper.services.telegram.TelegramBotService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +48,7 @@ public class IdeasService {
     private final SourceService sourceService;
     private final AuthorService authorService;
     private final TagService tagService;
+    private final Notifier notifier;
 
     @Value("${pf-man.images.base.path:/data/images}")
     private String IMAGES_BASE_PATH;
@@ -246,5 +253,15 @@ public class IdeasService {
                 .setStatus(ideaTrigger.getStatus())
                 .setWaitingForActivationSettedDate(ideaTrigger.getWaitingForActivationSettedDate())
                 .setActivatedDate(ideaTrigger.getActivatedDate());
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleIdeaActivationEvent(IdeaActivationEvent ideaActivationEvent) {
+        notifier.notifyUsersAboutIdeaActivation(ideaActivationEvent.getIdeaId());
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleIdeaActivationEvent(IdeaFinishingEvent ideaFinishingEvent) {
+        notifier.notifyUsersAboutIdeaFinishing(ideaFinishingEvent.getIdeaId());
     }
 }

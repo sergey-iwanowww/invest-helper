@@ -87,4 +87,12 @@ public class InstrumentsController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(path = "/fake")
+    public ResponseEntity<Void> fake() {
+
+        ideasChecker.fake();
+
+        return ResponseEntity.ok().build();
+    }
 }

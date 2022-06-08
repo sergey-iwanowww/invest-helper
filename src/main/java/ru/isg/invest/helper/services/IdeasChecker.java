@@ -3,6 +3,8 @@ package ru.isg.invest.helper.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.isg.invest.helper.dto.IdeaActivationEvent;
+import ru.isg.invest.helper.dto.IdeaFinishingEvent;
 import ru.isg.invest.helper.model.DateIdeaTrigger;
 import ru.isg.invest.helper.model.Idea;
 import ru.isg.invest.helper.model.IdeaStatuses;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkState;
 import static ru.isg.invest.helper.model.IdeaConceptTypes.RISE;
@@ -72,6 +75,20 @@ public class IdeasChecker {
                 "Finish trigger has no suitable status for processing: " + finishTrigger.getStatus());
 
         finishTrigger.acceptVisitor(new IdeaTriggerProcessorVisitor());
+    }
+
+    private static int fake = 0;
+
+    @Transactional
+    public void fake() {
+        if (fake % 2 == 0) {
+            ServiceRegistry.getApplicationEventPublisher()
+                    .publishEvent(new IdeaActivationEvent(UUID.fromString("af215ebb-5a15-4045-8f23-4b184de39f88")));
+        } else {
+            ServiceRegistry.getApplicationEventPublisher()
+                    .publishEvent(new IdeaFinishingEvent(UUID.fromString("af215ebb-5a15-4045-8f23-4b184de39f88")));
+        }
+        fake++;
     }
 
     private class IdeaTriggerProcessorVisitor implements IdeaTriggerVisitor {

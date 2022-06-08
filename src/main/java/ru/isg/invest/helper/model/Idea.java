@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import ru.isg.invest.helper.dto.IdeaActivationEvent;
+import ru.isg.invest.helper.dto.IdeaFinishingEvent;
+import ru.isg.invest.helper.services.ServiceRegistry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -164,6 +167,8 @@ public class Idea {
         }
 
         this.status = ACTIVE;
+
+        ServiceRegistry.getApplicationEventPublisher().publishEvent(new IdeaActivationEvent(this.id));
     }
 
     public void finish(LocalDateTime finishedDate, BigDecimal finishedPrice) {
@@ -172,6 +177,8 @@ public class Idea {
         this.finishedPrice = finishedPrice;
 
         this.status = FINISHED;
+
+        ServiceRegistry.getApplicationEventPublisher().publishEvent(new IdeaFinishingEvent(this.id));
     }
 
     public void cancel(LocalDateTime cancelledDate, BigDecimal cancelledPrice) {
