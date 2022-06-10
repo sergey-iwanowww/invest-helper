@@ -44,16 +44,7 @@ import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
 public class TinkoffCandlesImporter implements CandlesImporter {
 
     private final CandleRepository candleRepository;
-
-    private InvestApi api;
-
-    @Value("${tinkoff.api.token}")
-    private String token;
-
-    @PostConstruct
-    public void init() {
-        api = InvestApi.createSandbox(token);
-    }
+    private final TinkoffApiClient tinkoffApiClient;
 
     @Override
     public ImportCandlesResult importCandles(Instrument instrument, TimeFrames timeFrame, LocalDateTime dateFrom,
@@ -102,7 +93,7 @@ public class TinkoffCandlesImporter implements CandlesImporter {
                 }
             } else {
 
-                var truncatedDate = truncateDateToTimeFrame(tinkoffDate, timeFrame);;
+                var truncatedDate = truncateDateToTimeFrame(tinkoffDate, timeFrame);
 
                 if (date != null && truncatedDate.isAfter(date)) {
                     Candle candle = saveCandle(instrument, timeFrame, date, min, max, open, close, volume, true);
@@ -146,7 +137,8 @@ public class TinkoffCandlesImporter implements CandlesImporter {
             default -> throw new IllegalArgumentException("Candle interval not supported: " + candleInterval);
         };
 
-        for (Instant instant = instantFrom; instant.isBefore(instantTo); instant = instant.plusSeconds(requestMaxPeriod)) {
+        for (Instant instant = instantFrom; instant.isBefore(instantTo); instant = instant
+                .plusSeconds(requestMaxPeriod)) {
 
             // TODO: некоторая гарантия отсутствия > 60 запросов в минуту с одним токеном к api тинькофф
             try {
@@ -163,7 +155,7 @@ public class TinkoffCandlesImporter implements CandlesImporter {
             log.debug("Try to get candles from tinkoff api: figi = {}, from = {}, to = {}, candleInterval = {}",
                     figi, instant, tmpInstantTo, candleInterval);
 
-            var tinkoffCandles = api.getMarketDataService()
+            var tinkoffCandles = tinkoffApiClient.getMarketDataService()
                     .getCandlesSync(figi, instant, tmpInstantTo, candleInterval);
 
             log.debug("Received {} candles", tinkoffCandles.size());

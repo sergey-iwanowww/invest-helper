@@ -18,9 +18,9 @@ pf-man:
 
 tinkoff:
   api:
-    token: XXX
+    token: 123
 
 telegram:
   bot:
     username: Investment Storyteller
-    token: XXX
+    token: 123

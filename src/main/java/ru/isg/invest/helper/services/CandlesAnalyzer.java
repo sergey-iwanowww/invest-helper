@@ -1,6 +1,7 @@
 package ru.isg.invest.helper.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.isg.invest.helper.model.Candle;
 import ru.isg.invest.helper.model.Instrument;
@@ -24,6 +25,11 @@ import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
 public class CandlesAnalyzer {
 
     private final CandleRepository candleRepository;
+
+    public Optional<Candle> getLastCandle(Instrument instrument, TimeFrames timeFrame) {
+        return candleRepository.getCandlesByInstrumentIdAndTimeFrameOrderByOpenDateDesc(instrument.getId(), timeFrame,
+                PageRequest.of(0, 1)).stream().findAny();
+    }
 
     public Optional<BigDecimal> getLastPrice(Instrument instrument, TimeFrames timeFrame, LocalDateTime date) {
         return candleRepository

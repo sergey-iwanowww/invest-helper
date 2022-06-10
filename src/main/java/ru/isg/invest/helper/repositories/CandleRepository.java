@@ -1,5 +1,7 @@
 package ru.isg.invest.helper.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.isg.invest.helper.model.Candle;
@@ -41,4 +43,7 @@ public interface CandleRepository extends JpaRepository<Candle, UUID> {
             + " and c.closeDate >= :closeDateFrom and c.closeDate < :closeDateTo and c.complete = true")
     List<Candle> getCandlesNew(UUID instrumentId, TimeFrames timeFrame, LocalDateTime closeDateFrom,
             LocalDateTime closeDateTo);
+
+    Page<Candle> getCandlesByInstrumentIdAndTimeFrameOrderByOpenDateDesc(UUID instrumentId, TimeFrames timeFrame,
+            Pageable pageable);
 }

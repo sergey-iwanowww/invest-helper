@@ -13,19 +13,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TimerService {
 
-    private final MonitoredInstrumentsChecker monitoredInstrumentsChecker;
+    private final MonitoredCandlesChecker monitoredCandlesChecker;
     private final CandlesImportTasksChecker candlesImportTasksChecker;
     private final IdeasChecker ideasChecker;
+    private final TinkoffTradingDaysImporter tinkoffTradingDaysImporter;
 
-//    @Scheduled(cron = "")
+//    @Scheduled(cron = "0 */1 * * * *")
     public void checkMonitoredCandles() {
-        log.info("Запуск проверки отслеживаемых инструментов");
-        monitoredInstrumentsChecker.check();
+        monitoredCandlesChecker.check();
     }
 
-//    @Scheduled(cron = "")
+    @Scheduled(cron = "0 */1 * * * *")
     public void checkCandlesImportTasks() {
-        log.info("Запуск проверки задач на импорт свечей");
         candlesImportTasksChecker.check();
     }
 
@@ -33,5 +32,10 @@ public class TimerService {
     public void checkIdeas() {
         log.info("Запуск проверки идей");
         ideasChecker.check();
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void checkTradingDays() {
+        tinkoffTradingDaysImporter.importTradingDays();
     }
 }

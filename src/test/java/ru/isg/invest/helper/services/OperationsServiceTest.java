@@ -1,7 +1,10 @@
 package ru.isg.invest.helper.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -23,7 +26,8 @@ import static ru.tinkoff.piapi.contract.v1.OperationType.OPERATION_TYPE_SELL;
 /**
  * Created by s.ivanov on 04.06.2022.
  */
-//@SpringBootTest
+@Disabled
+@SpringBootTest
 @Slf4j
 public class OperationsServiceTest {
 
@@ -35,7 +39,7 @@ public class OperationsServiceTest {
     @Value("${tinkoff.api.token}")
     private String token;
 
-//    @Test
+    @Test
     public void test() {
 
         api = InvestApi.createSandbox(token);

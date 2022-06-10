@@ -40,6 +40,4 @@ public class MonitoredCandle {
     @Column(nullable = false)
     @Enumerated(STRING)
     private TimeFrames timeFrame;
-
-    private LocalDateTime lastCandleDate;
 }

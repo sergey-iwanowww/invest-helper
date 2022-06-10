@@ -29,7 +29,8 @@ import static ru.isg.invest.helper.model.CandlesImportTaskStatuses.PROCESSING;
 @NoArgsConstructor(access = PROTECTED)
 public class CandlesImportTask {
 
-    public CandlesImportTask(Instrument instrument, TimeFrames timeFrame, LocalDateTime dateFrom, LocalDateTime dateTo) {
+    public CandlesImportTask(Instrument instrument, TimeFrames timeFrame, LocalDateTime dateFrom,
+            LocalDateTime dateTo) {
         this.instrument = instrument;
         this.timeFrame = timeFrame;
         this.dateFrom = dateFrom;
@@ -54,12 +55,12 @@ public class CandlesImportTask {
     @Column(nullable = false)
     private LocalDateTime dateTo;
 
-    private LocalDateTime lastCompletedCandleDate;
-
     @Setter
     @Enumerated(STRING)
+    @Column(nullable = false)
     private CandlesImportTaskStatuses status = ACTIVE;
 
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     public void processingStarted() {
@@ -67,8 +68,6 @@ public class CandlesImportTask {
     }
 
     public void processingFinished(LocalDateTime lastCompletedCandleDate) {
-
-        this.lastCompletedCandleDate = lastCompletedCandleDate;
 
         if (lastCompletedCandleDate.plus(timeFrame.getAmount(), timeFrame.getChronoUnit()).compareTo(dateTo) >= 0) {
             status = DONE;
