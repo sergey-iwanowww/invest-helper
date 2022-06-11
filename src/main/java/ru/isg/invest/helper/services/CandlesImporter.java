@@ -1,6 +1,5 @@
 package ru.isg.invest.helper.services;
 
-import ru.isg.invest.helper.dto.ImportCandlesResult;
 import ru.isg.invest.helper.model.Instrument;
 import ru.isg.invest.helper.model.TimeFrames;
 
@@ -11,5 +10,5 @@ import java.time.LocalDateTime;
  */
 public interface CandlesImporter {
 
-    ImportCandlesResult importCandles(Instrument instrument, TimeFrames timeFrame, LocalDateTime dateFrom, LocalDateTime dateTo);
+    void importCandles(Instrument instrument, TimeFrames timeFrame, LocalDateTime dateFrom, LocalDateTime dateTo);
 }

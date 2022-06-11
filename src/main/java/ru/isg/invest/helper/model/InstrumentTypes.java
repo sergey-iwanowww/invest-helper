@@ -7,5 +7,6 @@ public enum InstrumentTypes {
     CURRENCY,
     STOCK,
     BOND,
-    FUND
+    FUND,
+    FUTURE
 }

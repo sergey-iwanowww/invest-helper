@@ -28,7 +28,7 @@ create table public.candles_import_tasks
     instrument_id              uuid        not null,
     time_frame                 varchar(32) not null,
     date_from                  timestamp   not null,
-    date_to                    timestamp   not null,
+    date_to                    timestamp,
     status                     varchar(16) not null,
     created_date               timestamp   not null,
     constraint instrument_id_instruments_id foreign key (instrument_id) references public.instruments (id) on update restrict on delete restrict

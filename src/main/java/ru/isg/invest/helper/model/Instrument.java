@@ -5,12 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
+
+import static javax.persistence.EnumType.STRING;
 
 /**
  * Created by s.ivanov on 13.11.2021.
@@ -22,34 +24,36 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Instrument {
 
+    public Instrument(InstrumentTypes type, String ticker, String name, Currencies currency, String figi, String exchange) {
+        this.type = type;
+        this.ticker = ticker;
+        this.name = name;
+        this.currency = currency;
+        this.figi = figi;
+        this.exchange = exchange;
+    }
+
     @Id
     private UUID id = UUID.randomUUID();
 
-    @Setter
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
+    @Column(nullable = false)
     private InstrumentTypes type;
 
-    @Setter
+    @Column(nullable = false)
     private String ticker;
 
     @Setter
+    @Column(nullable = false)
     private String name;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private Markets market;
+    @Column(nullable = false)
+    @Enumerated(STRING)
+    private Currencies currency;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private TradingModes tradingMode;
-
-    @Setter
-    private String currencyCode;
-
-    @Setter
+    @Column(nullable = false)
     private String figi;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private Sectors sector;
+    @Column(nullable = false)
+    private String exchange;
 }

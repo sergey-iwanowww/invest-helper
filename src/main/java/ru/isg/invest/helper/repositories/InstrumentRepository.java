@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface InstrumentRepository extends JpaRepository<Instrument, UUID> {
 
     Optional<Instrument> findByTicker(String ticker);
+
+    Optional<Instrument> findByFigi(String figi);
 }

@@ -15,16 +15,10 @@ import ru.isg.invest.helper.services.IdeasChecker;
 import ru.isg.invest.helper.services.InstrumentService;
 
 import javax.validation.Valid;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.isg.invest.helper.model.TimeFrames.FIVE_MINUTES;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_DAY;
 import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_MONTH;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_WEEK;
 
 /**
  * Created by s.ivanov on 14.11.2021.
@@ -48,26 +42,14 @@ public class InstrumentsController {
     @PostMapping
     public ResponseEntity<Void> createInstrument(@RequestBody @Valid CreateInstrumentRequest createInstrumentRequest) {
         instrumentService.createInstrument(createInstrumentRequest.getType(), createInstrumentRequest.getTicker(),
-                createInstrumentRequest.getName(), createInstrumentRequest.getMarket(),
-                createInstrumentRequest.getTradingMode(), createInstrumentRequest.getCurrencyCode(),
-                createInstrumentRequest.getFigi(), createInstrumentRequest.getSector());
+                createInstrumentRequest.getName(), createInstrumentRequest.getCurrencyCode(),
+                createInstrumentRequest.getFigi());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<List<InstrumentDto>> listInstruments() {
         return ResponseEntity.ok(instrumentService.listInstruments());
-    }
-
-    @PostMapping(path = "/load")
-    public ResponseEntity<Void> loadInstruments() throws IOException {
-
-        instrumentService.loadInstrumentsFromTinkoffJson(new FileInputStream("/data/tinkoff-bonds.json"));
-        instrumentService.loadInstrumentsFromTinkoffJson(new FileInputStream("/data/tinkoff-currencies.json"));
-        instrumentService.loadInstrumentsFromTinkoffJson(new FileInputStream("/data/tinkoff-etfs.json"));
-        instrumentService.loadInstrumentsFromTinkoffJson(new FileInputStream("/data/tinkoff-stocks.json"));
-
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/import")

@@ -1,7 +1,6 @@
 package ru.isg.invest.helper.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.isg.invest.helper.model.Author;
 import ru.isg.invest.helper.model.Instrument;
@@ -18,11 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static ru.isg.invest.helper.model.Currencies.RUB;
 import static ru.isg.invest.helper.model.InstrumentTypes.STOCK;
-import static ru.isg.invest.helper.model.Markets.MOEX;
-import static ru.isg.invest.helper.model.Sectors.OTHER;
 import static ru.isg.invest.helper.model.SourceTypes.TELEGRAM;
-import static ru.isg.invest.helper.model.TradingModes.T0;
 
 /**
  * Created by s.ivanov on 31.05.2022.
@@ -119,15 +116,7 @@ public class TestHelper {
     }
 
     private Instrument createInstrument(String name, String figi, String ticker) {
-        return instrumentRepository.save(new Instrument()
-                .setName(name)
-                .setType(STOCK)
-                .setCurrencyCode("RUB")
-                .setFigi(figi)
-                .setMarket(MOEX)
-                .setSector(OTHER)
-                .setTicker(ticker)
-                .setTradingMode(T0));
+        return instrumentRepository.save(new Instrument(STOCK, ticker, name, RUB, figi, ""));
     }
 
     public Instrument getRandomInstrument() {

@@ -52,7 +52,7 @@ public class CandlesImportTask {
     @Column(nullable = false)
     private LocalDateTime dateFrom;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime dateTo;
 
     @Setter
@@ -67,12 +67,7 @@ public class CandlesImportTask {
         this.status = PROCESSING;
     }
 
-    public void processingFinished(LocalDateTime lastCompletedCandleDate) {
-
-        if (lastCompletedCandleDate.plus(timeFrame.getAmount(), timeFrame.getChronoUnit()).compareTo(dateTo) >= 0) {
-            status = DONE;
-        } else {
-            status = ACTIVE;
-        }
+    public void processingFinished() {
+        status = DONE;
     }
 }

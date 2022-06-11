@@ -39,12 +39,11 @@ public class CandlesImportTasksChecker {
         log.debug("Candles import started for instrument with id = {}, timeFrame = {}, dateFrom = {}, dateTo = {}",
                 task.getInstrument().getId(), task.getTimeFrame(), task.getDateFrom(), task.getDateTo());
 
-        ImportCandlesResult result = candlesImporter.importCandles(task.getInstrument(), task.getTimeFrame(),
-                task.getDateFrom(), task.getDateTo());
+        candlesImporter.importCandles(task.getInstrument(), task.getTimeFrame(), task.getDateFrom(), task.getDateTo());
 
-        task.processingFinished(result.getLastCompletedCandleDate());
+        task.processingFinished();
 
-        log.debug("Candles import finished, last completed candleDate = {}", result.getLastCompletedCandleDate());
+        log.debug("Candles import finished");
 
         candlesImportTaskRepository.save(task);
     }

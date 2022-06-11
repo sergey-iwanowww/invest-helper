@@ -50,15 +50,13 @@ create table public.ideas
 
 create table public.instruments
 (
-    id            uuid                  not null,
-    type          character varying(16) not null,
-    ticker        character varying(32) not null,
-    name          character varying(128),
-    market        character varying(16) not null,
-    trading_mode  character varying(4)  not null,
-    currency_code character varying(8)  not null,
-    figi          character varying(32) not null,
-    sector        character varying(32) not null
+    id           uuid                   not null,
+    type         character varying(16)  not null,
+    ticker       character varying(32)  not null,
+    name         character varying(128) not null,
+    currency     character varying(8)   not null,
+    figi         character varying(32)  not null,
+    exchange     character varying(64)  not null
 );
 
 create table public.portfolios
