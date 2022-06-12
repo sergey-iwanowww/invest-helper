@@ -52,16 +52,6 @@ public class InstrumentsController {
         return ResponseEntity.ok(instrumentService.listInstruments());
     }
 
-    @PostMapping(path = "/import")
-    public ResponseEntity<Void> importInstruments() {
-
-        candlesImporter.importCandles(instrumentRepository.findByTicker("SBER").get(), ONE_HOUR,
-                LocalDateTime.of(2022, 5, 1, 0, 0, 0),
-                LocalDateTime.of(2022, 6, 1, 0, 0, 0));
-
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping(path = "/ideas")
     public ResponseEntity<Void> ideas() {
 

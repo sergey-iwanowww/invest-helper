@@ -2,8 +2,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:55432/investtest
     driver-class-name: org.postgresql.Driver
-    username: investtest
-    password: investtest
+    username: invest
+    password: invest
 
 logging:
   level:

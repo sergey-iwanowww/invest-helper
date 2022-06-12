@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import ru.isg.invest.helper.services.TimeFrameUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +16,10 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -35,7 +38,7 @@ public class Candle {
         this.instrument = instrument;
         this.timeFrame = timeFrame;
         this.openDate = openDate;
-        this.closeDate = openDate.plus(timeFrame.getAmount(), timeFrame.getChronoUnit()).minusSeconds(1);
+        this.closeDate = TimeFrameUtils.getTimeFrameCloseDate(openDate, timeFrame);
         this.min = min.setScale(4, RoundingMode.HALF_UP);
         this.max = max.setScale(4, RoundingMode.HALF_UP);
         this.open = open.setScale(4, RoundingMode.HALF_UP);

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static ru.isg.invest.helper.model.Currencies.RUB;
 import static ru.isg.invest.helper.model.InstrumentTypes.STOCK;
 import static ru.isg.invest.helper.model.SourceTypes.TELEGRAM;
@@ -59,7 +60,7 @@ public class TestHelper {
     public Author getRandomAuthor() {
         List<Author> authors = authorRepository.findAll();
         Collections.shuffle(authors);
-        return authors.get(0);
+        return authors.size() > 0 ? authors.get(0) : null;
     }
 
     private List<Source> createSources() {
@@ -79,7 +80,7 @@ public class TestHelper {
     public Source getRandomSource() {
         List<Source> sources = sourceRepository.findAll();
         Collections.shuffle(sources);
-        return sources.get(0);
+        return sources.size() > 0 ? sources.get(0) : null;
     }
 
     private List<Tag> createTags() {
@@ -95,7 +96,7 @@ public class TestHelper {
 
     public Tag getRandomTag() {
         List<Tag> tags = getRandomTags(1);
-        return tags.get(0);
+        return tags.size() > 0 ? tags.get(0) : null;
     }
 
     public List<Tag> getRandomTags(int size) {
@@ -121,12 +122,12 @@ public class TestHelper {
 
     public Instrument getRandomInstrument() {
         List<Instrument> instruments = getRandomInstruments(1);
-        return instruments.get(0);
+        return instruments.size() > 0 ? instruments.get(0) : null;
     }
 
     public List<Instrument> getRandomInstruments(int size) {
         List<Instrument> instruments = instrumentRepository.findAll();
         Collections.shuffle(instruments);
-        return instruments.subList(0, size);
+        return instruments.size() >= size ? instruments.subList(0, size) : newArrayList();
     }
 }

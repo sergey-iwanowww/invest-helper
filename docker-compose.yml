@@ -15,7 +15,7 @@ services:
       - ../../../front/invest-console/build:/usr/share/nginx/html/invest-console:ro
 
   invest-db:
-    image: postgres:9.6
+    image: postgres:14.3-alpine
     container_name: invest-db
     hostname: invest-db
     restart: always
