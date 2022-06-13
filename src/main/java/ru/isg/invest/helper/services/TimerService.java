@@ -17,9 +17,10 @@ public class TimerService {
     private final CandlesImportTasksChecker candlesImportTasksChecker;
     private final IdeasChecker ideasChecker;
     private final TinkoffTradingDaysImporter tinkoffTradingDaysImporter;
-    private final TinkoffInstrumentsImporter tinkoffinstrumentsImporter;
+    private final TinkoffInstrumentsImporter tinkoffInstrumentsImporter;
+    private final TinkoffOperationsImporter tinkoffOperationsImporter;
 
-//    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void checkMonitoredCandles() {
         monitoredCandlesChecker.check();
     }
@@ -42,6 +43,11 @@ public class TimerService {
 
     @Scheduled(cron = "0 5 */4 * * *")
     public void checkInstruments() {
-        tinkoffinstrumentsImporter.importInstruments();
+        tinkoffInstrumentsImporter.importInstruments();
+    }
+
+    @Scheduled(cron = "0 */5 * * * *")
+    public void checkOperations() {
+        tinkoffOperationsImporter.importOperations();
     }
 }

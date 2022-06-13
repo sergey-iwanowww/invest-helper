@@ -60,7 +60,7 @@ public class MonitoredCandlesChecker {
 
     private boolean isCandlesImportAvailable(MonitoredCandle mc) {
         List<CandlesImportTask> activeTasks = candlesImportTaskRepository
-                .getTasksByInstrumentAndTimeFrame(mc.getInstrument().getId(), mc.getTimeFrame(),
+                .findTasksByInstrumentAndTimeFrame(mc.getInstrument().getId(), mc.getTimeFrame(),
                         List.of(ACTIVE, PROCESSING));
         return activeTasks.size() == 0;
     }
@@ -71,7 +71,7 @@ public class MonitoredCandlesChecker {
         if (lastCandleOpt.isPresent()) {
             return getDateFrom(lastCandleOpt.get(), mc);
         } else {
-            return Optional.of(getDateFromDefault(mc.getTimeFrame()));
+            return Optional.of(TimeFrameUtils.getTimeFrameOpenDateDefault(mc.getTimeFrame()));
         }
     }
 
@@ -106,14 +106,5 @@ public class MonitoredCandlesChecker {
         return task;
     }
 
-    private LocalDateTime getDateFromDefault(TimeFrames timeFrame) {
-        LocalDateTime curDate = LocalDateTime.now().truncatedTo(DAYS).withHour(0);
-        return switch (timeFrame) {
-            case FIVE_MINUTES -> curDate.minus(1, DAYS);
-            case ONE_HOUR -> curDate.minus(2, MONTHS);
-            case ONE_DAY -> curDate.minus(1, YEARS);
-            case ONE_WEEK -> curDate.minus(5, YEARS);
-            case ONE_MONTH -> curDate.minus(10, YEARS);
-        };
-    }
+
 }

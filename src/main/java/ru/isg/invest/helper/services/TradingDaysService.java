@@ -29,22 +29,32 @@ public class TradingDaysService {
      */
     public boolean isInstrumentTraded(Instrument instrument, LocalDateTime dateFrom, LocalDateTime dateTo) {
 
-        Map<LocalDate, TradingDay> tradingDays = tradingDayRepository
-                .findTradingDayByExchangeAndDateGreaterThanEqualAndDateLessThanOrderByDate(instrument.getExchange(),
-                        dateFrom, dateTo)
-                .stream()
-                .collect(Collectors.toMap(TradingDay::getDate, td -> td));
+        LocalDate dateFromToUse = dateFrom.toLocalDate();
 
         // Важно учесть, что должны быть учтены дни, начиная от дня даты dateFrom включительно и до
         // дня даты dateTo включительно, если время dateTo > 00:00 и не включительно, если время dateTo == 00:00
-        for (LocalDateTime date = dateFrom.truncatedTo(DAYS); date.isBefore(dateTo); date = date.plusDays(1)) {
-            TradingDay tradingDay = tradingDays.get(date.toLocalDate());
+
+        LocalDate dateToToUse;
+        if (dateTo.isAfter(dateTo.truncatedTo(DAYS))) {
+            dateToToUse = dateTo.plusDays(1).toLocalDate();
+        } else {
+            dateToToUse = dateTo.toLocalDate();
+        }
+
+        Map<LocalDate, TradingDay> tradingDays = tradingDayRepository
+                .findTradingDayByExchangeAndDateGreaterThanEqualAndDateLessThanOrderByDate(instrument.getExchange(),
+                        dateFromToUse, dateToToUse)
+                .stream()
+                .collect(Collectors.toMap(TradingDay::getDate, td -> td));
+
+        for (LocalDate date = dateFromToUse; date.isBefore(dateToToUse); date = date.plusDays(1)) {
+            TradingDay tradingDay = tradingDays.get(date);
             if (tradingDay != null) {
                 // если день торговый и проверяемый период пересекается с временем торгов, считаем, что инструмент
                 // торговался
                 if (tradingDay.isTradingDay()
-                        && tradingDay.getStartDate().compareTo(dateTo) <= 0
-                        && tradingDay.getEndDate().compareTo(dateFrom) > 0) {
+                        && tradingDay.getStartDate().compareTo(dateTo) < 0
+                        && tradingDay.getEndDate().compareTo(dateFrom) >= 0) {
                     return true;
                 }
             } else {

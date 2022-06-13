@@ -17,6 +17,11 @@ pf-man:
       path: ./
 
 tinkoff:
+  account:
+    speculative:
+      id: 123
+    dividends:
+      id: 123
   api:
     token: 123
 

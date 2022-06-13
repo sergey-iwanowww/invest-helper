@@ -8,6 +8,8 @@ import static java.time.DayOfWeek.MONDAY;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static java.time.temporal.ChronoUnit.MONTHS;
+import static java.time.temporal.ChronoUnit.YEARS;
 import static ru.isg.invest.helper.model.TimeFrames.ONE_MONTH;
 import static ru.isg.invest.helper.model.TimeFrames.ONE_WEEK;
 
@@ -49,6 +51,17 @@ public class TimeFrameUtils {
                     .plusMonths(1)
                     .truncatedTo(DAYS)
                     .minus(1, MILLIS);
+        };
+    }
+
+    public static LocalDateTime getTimeFrameOpenDateDefault(TimeFrames timeFrame) {
+        LocalDateTime curDate = LocalDateTime.now().truncatedTo(DAYS).withHour(7);
+        return switch (timeFrame) {
+            case FIVE_MINUTES -> curDate.minus(1, DAYS);
+            case ONE_HOUR -> curDate.minus(2, MONTHS);
+            case ONE_DAY -> curDate.minus(1, YEARS);
+            case ONE_WEEK -> curDate.minus(5, YEARS);
+            case ONE_MONTH -> curDate.minus(10, YEARS);
         };
     }
 }

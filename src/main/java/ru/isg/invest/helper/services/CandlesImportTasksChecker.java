@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.isg.invest.helper.dto.ImportCandlesResult;
 import ru.isg.invest.helper.model.CandlesImportTask;
 import ru.isg.invest.helper.repositories.CandlesImportTaskRepository;
 
@@ -25,7 +24,7 @@ public class CandlesImportTasksChecker {
 
         log.info("Candles import tasks checking started");
 
-        candlesImportTaskRepository.getTasksByStatusOrderByCreatedDate(ACTIVE)
+        candlesImportTaskRepository.findTasksByStatusOrderByCreatedDate(ACTIVE)
                 .forEach(this::processTask);
 
         log.info("Candles import tasks checking finished");

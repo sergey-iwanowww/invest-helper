@@ -111,13 +111,13 @@ public class TestHelper {
     }
 
     private List<Instrument> createInstruments() {
-        return IntStream.of(1, 2, 3, 4)
-                .mapToObj(i -> createInstrument("тест акция " + i, "figi" + i, "TCKR" + i))
+        return IntStream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                .mapToObj(i -> createInstrument("тест акция " + i, "figi" + i, "TCKR" + i, "ex" + i))
                 .collect(Collectors.toList());
     }
 
-    private Instrument createInstrument(String name, String figi, String ticker) {
-        return instrumentRepository.save(new Instrument(STOCK, ticker, name, RUB, figi, ""));
+    private Instrument createInstrument(String name, String figi, String ticker, String exchange) {
+        return instrumentRepository.save(new Instrument(STOCK, ticker, name, RUB, figi, exchange));
     }
 
     public Instrument getRandomInstrument() {

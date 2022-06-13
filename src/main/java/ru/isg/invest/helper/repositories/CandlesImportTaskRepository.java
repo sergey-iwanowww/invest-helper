@@ -14,10 +14,12 @@ import java.util.UUID;
  */
 public interface CandlesImportTaskRepository extends JpaRepository<CandlesImportTask, UUID> {
 
-    List<CandlesImportTask> getTasksByStatusOrderByCreatedDate(CandlesImportTaskStatuses status);
+    List<CandlesImportTask> findTasksByStatusOrderByCreatedDate(CandlesImportTaskStatuses status);
 
     @Query("select t from CandlesImportTask t where t.instrument.id = :instrumentId and t.timeFrame = :timeFrame "
             + " and t.status in :statuses")
-    List<CandlesImportTask> getTasksByInstrumentAndTimeFrame(UUID instrumentId, TimeFrames timeFrame,
+    List<CandlesImportTask> findTasksByInstrumentAndTimeFrame(UUID instrumentId, TimeFrames timeFrame,
             List<CandlesImportTaskStatuses> statuses);
+
+    List<CandlesImportTask> findCandlesImportTasksByInstrumentId(UUID instrumentId);
 }

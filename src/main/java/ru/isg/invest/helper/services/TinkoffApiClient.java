@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.OperationsService;
 
 import javax.annotation.PostConstruct;
 
@@ -30,5 +31,9 @@ public class TinkoffApiClient {
 
     public InstrumentsService getInstrumentsService() {
         return api.getInstrumentsService();
+    }
+
+    public OperationsService getOperationsService() {
+        return api.getOperationsService();
     }
 }
