@@ -6,6 +6,7 @@ import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
+import ru.tinkoff.piapi.core.stream.MarketDataStreamService;
 
 import javax.annotation.PostConstruct;
 
@@ -22,7 +23,7 @@ public class TinkoffApiClient {
 
     @PostConstruct
     public void init() {
-        api = InvestApi.createSandbox(token);
+        api = InvestApi.createReadonly(token);
     }
 
     public MarketDataService getMarketDataService() {
@@ -35,5 +36,9 @@ public class TinkoffApiClient {
 
     public OperationsService getOperationsService() {
         return api.getOperationsService();
+    }
+
+    public MarketDataStreamService getMarketDataStreamService() {
+        return api.getMarketDataStreamService();
     }
 }

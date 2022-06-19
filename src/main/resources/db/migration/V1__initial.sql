@@ -61,9 +61,10 @@ create table public.instruments
 
 create table public.portfolios
 (
-    id     uuid                   not null,
-    name   character varying(256) not null,
-    broker character varying(32)  not null
+    id          uuid                   not null,
+    name        character varying(256) not null,
+    broker      character varying(32)  not null,
+    external_id character varying(32)  not null
 );
 
 create table public.source_author_links

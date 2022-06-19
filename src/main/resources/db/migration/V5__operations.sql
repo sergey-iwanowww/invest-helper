@@ -8,6 +8,8 @@ create table public.operations
     payment       decimal(11, 4) not null,
     currency      varchar(8)     not null,
     external_id   varchar(32)    not null,
+    portfolio_id  uuid           not null,
     constraint operations_pk primary key (id),
-    constraint instrument_id_instruments_id foreign key (instrument_id) references public.instruments (id) on delete restrict on update restrict
+    constraint instrument_id_instruments_id foreign key (instrument_id) references public.instruments (id) on delete restrict on update restrict,
+    constraint portfolio_id_portfolios_id foreign key (portfolio_id) references public.portfolios (id) on delete restrict on update restrict
 );

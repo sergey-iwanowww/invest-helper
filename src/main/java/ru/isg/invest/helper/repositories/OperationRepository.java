@@ -1,8 +1,11 @@
 package ru.isg.invest.helper.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.isg.invest.helper.model.Operation;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,5 +14,9 @@ import java.util.UUID;
  */
 public interface OperationRepository extends JpaRepository<Operation, UUID> {
 
-    Optional<Operation> findByExternalId(String externalId);
+    Optional<Operation> findByPortfolioIdAndExternalId(UUID portfolioId, String externalId);
+
+    Page<Operation> findByPortfolioId(UUID portfolioId, Pageable pageable);
+
+    List<Operation> findByPortfolioIdAndInstrumentIdOrderByDate(UUID portfolioId, UUID instrumentId);
 }

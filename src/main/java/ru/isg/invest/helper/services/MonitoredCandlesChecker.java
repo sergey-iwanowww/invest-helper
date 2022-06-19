@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.isg.invest.helper.model.Candle;
 import ru.isg.invest.helper.model.CandlesImportTask;
 import ru.isg.invest.helper.model.MonitoredCandle;
-import ru.isg.invest.helper.model.TimeFrames;
 import ru.isg.invest.helper.repositories.CandlesImportTaskRepository;
 import ru.isg.invest.helper.repositories.MonitoredInstrumentRepository;
 
@@ -15,9 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.MONTHS;
-import static java.time.temporal.ChronoUnit.YEARS;
 import static ru.isg.invest.helper.model.CandlesImportTaskStatuses.ACTIVE;
 import static ru.isg.invest.helper.model.CandlesImportTaskStatuses.PROCESSING;
 

@@ -26,8 +26,9 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 public class Operation {
 
-    public Operation(Instrument instrument, String type, LocalDateTime date, long count, BigDecimal payment,
-            Currencies currency, String externalId) {
+    public Operation(Portfolio portfolio, Instrument instrument, String type, LocalDateTime date, long count,
+            BigDecimal payment, Currencies currency, String externalId) {
+        this.portfolio = portfolio;
         this.instrument = instrument;
         this.type = type;
         this.date = date;
@@ -62,4 +63,8 @@ public class Operation {
 
     @Column(nullable = false)
     private long count;
+
+    @ManyToOne
+    @JoinColumn(name = "portfolio_id")
+    private Portfolio portfolio;
 }
