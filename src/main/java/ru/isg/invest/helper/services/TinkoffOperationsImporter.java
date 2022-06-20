@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import ru.isg.invest.helper.model.Currencies;
 import ru.isg.invest.helper.model.Instrument;
 import ru.isg.invest.helper.model.Operation;
@@ -19,6 +20,7 @@ import ru.isg.invest.helper.repositories.InstrumentRepository;
 import ru.isg.invest.helper.repositories.OperationRepository;
 import ru.isg.invest.helper.repositories.PortfolioRepository;
 import ru.isg.invest.helper.repositories.PositionRepository;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.core.utils.DateUtils;
 import ru.tinkoff.piapi.core.utils.MapperUtils;
 
@@ -26,9 +28,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -91,6 +95,8 @@ public class TinkoffOperationsImporter {
 
         Set<UUID> updatedInstrumentIds = new HashSet<>();
 
+        Map<OperationType, Boolean> m = new HashMap<>();
+
         tinkoffOps.stream()
                 .filter(top -> top.getState() != OPERATION_STATE_CANCELED)
                 .forEach(top -> {
@@ -111,14 +117,18 @@ public class TinkoffOperationsImporter {
 
                         Instrument instrument = instrumentRepository.findByFigi(top.getFigi()).get();
 
-                        OperationSavingResult result = saveOperation(portfolio, null,
-                                count, payment, currency, top.getOperationType().name(), date, top.getId());
+                        OperationSavingResult result = saveOperation(portfolio, instrument, count, payment, currency,
+                                top.getOperationType().name(), date, top.getId());
                         if (result.isSaved()) {
                             updatedInstrumentIds.add(instrument.getId());
                         }
                     } else {
-                        saveOperation(portfolio, null,
-                                count, payment, currency, top.getOperationType().name(), date, top.getId());
+                        if (StringUtils.hasText(top.getFigi())) {
+                            throw new IllegalStateException(
+                                    "Operation with id = " + top.getId() + " has figi, but figi not read");
+                        }
+                        saveOperation(portfolio, null, count, payment, currency, top.getOperationType().name(),
+                                date, top.getId());
                     }
                 });
 
@@ -128,8 +138,7 @@ public class TinkoffOperationsImporter {
     }
 
     private OperationSavingResult saveOperation(Portfolio portfolio, Instrument instrument, long count,
-            BigDecimal payment,
-            Currencies currency, String type, LocalDateTime date, String externalId) {
+            BigDecimal payment, Currencies currency, String type, LocalDateTime date, String externalId) {
 
         return operationRepository.findByPortfolioIdAndExternalId(portfolio.getId(), externalId)
                 .map(dbOp -> {
@@ -164,10 +173,11 @@ public class TinkoffOperationsImporter {
     @AllArgsConstructor
     static class BalanceItem {
         long count;
-        BigDecimal payment;
+        BigDecimal price;
     }
 
-    private void recalcPositions(Portfolio portfolio, Set<UUID> updatedInstrumentIds) {
+    public void recalcPositions(Portfolio portfolio, Set<UUID> updatedInstrumentIds) {
+
         updatedInstrumentIds.forEach(i -> {
 
             Instrument instrument = instrumentRepository.findById(i).get();
@@ -185,19 +195,69 @@ public class TinkoffOperationsImporter {
             Queue<BalanceItem> items = new LinkedList<>();
             for (Operation operation : operations) {
 
-                if (operation.getCount() == 0) {
-                    throw new IllegalStateException("Operation count equals to 0");
-                }
-
                 if (operation.getType().equals("OPERATION_TYPE_SELL")
-                    || operation.getType().equals("OPERATION_TYPE_BUY")) {
+                        || operation.getType().equals("OPERATION_TYPE_BUY")) {
+
+                    if (operation.getCount() == 0) {
+                        throw new IllegalStateException("Operation count equals to 0");
+                    }
+
                     result = result.add(operation.getPayment());
+
+                    BigDecimal operationPrice = operation.getPayment()
+                            .divide(BigDecimal.valueOf(operation.getCount()), 4, HALF_UP);
+                    long operationCount = operation.getCount();
+
+                    BalanceItem item = items.peek();
+
+                    if (item != null) {
+
+                        if (item.getCount() == 0) {
+                            throw new IllegalStateException("Item count equals to 0");
+                        }
+
+                        if (item.getCount() > 0 && operationCount < 0
+                            || item.getCount() < 0 && operationCount > 0) {
+
+                            while (item != null && operationCount != 0) {
+
+                                long potentialNewItemCount = item.getCount() + operationCount;
+
+                                long count;
+                                if (potentialNewItemCount == 0
+                                        || potentialNewItemCount > 0 && item.getCount() > 0
+                                        || potentialNewItemCount < 0 && item.getCount() < 0) {
+                                    count = operationCount;
+                                } else {
+                                    count = -1 * item.getCount();
+                                }
+
+                                item.setCount(item.getCount() + count);
+
+                                if (item.getCount() == 0) {
+                                    items.remove();
+                                }
+
+                                item = items.peek();
+
+                                operationCount = operationCount - count;
+                            }
+
+                            if (item == null && operationCount != 0) {
+                                items.add(new BalanceItem(operationCount, operationPrice));
+                            }
+                        } else{
+                            items.add(new BalanceItem(operationCount, operationPrice));
+                        }
+                    } else {
+                        items.add(new BalanceItem(operationCount, operationPrice));
+                    }
                 } else if (operation.getType().equals("OPERATION_TYPE_BROKER_FEE")) {
-                    commission = result.add(operation.getPayment());
+                    commission = commission.add(operation.getPayment());
                 } else if (operation.getType().equals("OPERATION_TYPE_DIVIDEND")) {
-                    dividends = result.add(operation.getPayment());
+                    dividends = dividends.add(operation.getPayment());
                 } else if (operation.getType().equals("OPERATION_TYPE_COUPON")) {
-                    coupons = result.add(operation.getPayment());
+                    coupons = coupons.add(operation.getPayment());
                 } else if (operation.getType().equals("OPERATION_TYPE_DIVIDEND_TAX")) {
                     dividendsTax = dividendsTax.add(operation.getPayment());
                 } else if (operation.getType().equals("OPERATION_TYPE_BOND_TAX")) {
@@ -205,50 +265,6 @@ public class TinkoffOperationsImporter {
                 } else {
                     throw new IllegalStateException("Unsupported operation type: " + operation.getType());
                 }
-
-                BalanceItem item = items.peek();
-
-                if (item != null) {
-                    if (Math.signum(item.getCount()) != Math.signum(operation.getCount())) {
-
-                        long operationCount = operation.getCount();
-
-                        while (item != null && operationCount != 0) {
-
-                            long potentialNewCount = item.getCount() + operation.getCount();
-
-                            long count;
-                            if (potentialNewCount == 0
-                                    || potentialNewCount > 0 && item.getCount() > 0
-                                    || potentialNewCount < 0 && item.getCount() < 0) {
-                                count = operation.getCount();
-                            } else {
-                                count = -1 * item.getCount();
-                            }
-
-                            operationCount = operationCount - count;
-
-                            long newCount = item.getCount() + count;
-
-                            item.setPayment(item.getPayment()
-                                    .divide(BigDecimal.valueOf(item.getCount()), 4, HALF_UP)
-                                    .multiply(BigDecimal.valueOf(newCount)));
-                            item.setCount(newCount);
-
-                            if (item.getCount() == 0) {
-                                items.remove();
-                            }
-
-                            item = items.peek();
-                        }
-                    } else {
-                        items.add(new BalanceItem(operation.getCount(), operation.getPayment()));
-                    }
-                } else {
-                    items.add(new BalanceItem(operation.getCount(), operation.getPayment()));
-                }
-
-                result = result.add(operation.getPayment());
             }
 
             long balanceCount = 0;
@@ -261,14 +277,14 @@ public class TinkoffOperationsImporter {
                 BalanceItem item;
                 while ((item = items.poll()) != null) {
                     balanceCount = balanceCount + item.getCount();
-                    balancePayment = balancePayment.add(item.getPayment());
+                    balancePayment = balancePayment.add(item.getPrice().multiply(BigDecimal.valueOf(item.getCount())));
                 }
 
-                balanceAverage = balancePayment.divide(balancePayment, 4, HALF_UP);
+                balanceAverage = balancePayment.divide(BigDecimal.valueOf(balanceCount), 4, HALF_UP);
             }
 
-            savePosition(portfolio, instrument, balanceCount, result, commission, balanceAverage, dividends, dividendsTax,
-                    coupons, couponsTax);
+            savePosition(portfolio, instrument, balanceCount, result, commission, balanceAverage, dividends,
+                    dividendsTax, coupons, couponsTax);
         });
     }
 

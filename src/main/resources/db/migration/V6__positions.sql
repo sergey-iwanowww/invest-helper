@@ -7,6 +7,10 @@ create table public.positions
     result          decimal(11, 4) not null,
     commission      decimal(11, 4) not null,
     balance_average decimal(11, 4) not null,
+    dividends       decimal(11, 4) not null,
+    dividends_tax   decimal(11, 4) not null,
+    coupons         decimal(11, 4) not null,
+    coupons_tax     decimal(11, 4) not null,
     constraint positions_pk primary key (id),
     constraint instrument_id_instruments_id foreign key (instrument_id) references public.instruments (id) on delete restrict on update restrict,
     constraint portfolio_id_portfolios_id foreign key (portfolio_id) references public.portfolios (id) on delete restrict on update restrict

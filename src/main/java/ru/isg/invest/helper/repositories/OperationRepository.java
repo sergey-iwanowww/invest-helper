@@ -16,6 +16,8 @@ public interface OperationRepository extends JpaRepository<Operation, UUID> {
 
     Optional<Operation> findByPortfolioIdAndExternalId(UUID portfolioId, String externalId);
 
+    List<Operation> findByPortfolioId(UUID portfolioId);
+
     Page<Operation> findByPortfolioId(UUID portfolioId, Pageable pageable);
 
     List<Operation> findByPortfolioIdAndInstrumentIdOrderByDate(UUID portfolioId, UUID instrumentId);
