@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.isg.invest.helper.dto.SourceDto;
-import ru.isg.invest.helper.dto.SourceRequest;
-import ru.isg.invest.helper.services.SourceService;
+import ru.isg.invest.helper.application.dtos.SourceDto;
+import ru.isg.invest.helper.application.dtos.SourceRequest;
+import ru.isg.invest.helper.application.services.SourceService;
 
 import javax.validation.Valid;
 import java.util.List;

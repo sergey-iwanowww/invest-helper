@@ -4,21 +4,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.isg.invest.helper.model.Candle;
-import ru.isg.invest.helper.model.Instrument;
-import ru.isg.invest.helper.repositories.CandleRepository;
+import ru.isg.invest.helper.application.services.CandlesAnalyzer;
+import ru.isg.invest.helper.application.services.PriceCrossedTheValueCheckingResults;
+import ru.isg.invest.helper.application.services.PriceCrossedTheValueWithRetestCheckingResults;
+import ru.isg.invest.helper.domain.model.Candle;
+import ru.isg.invest.helper.domain.model.Instrument;
+import ru.isg.invest.helper.infrastructure.repositories.CandleRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
+import static ru.isg.invest.helper.domain.model.CandleSources.IMPORTER;
+import static ru.isg.invest.helper.domain.model.TimeFrames.ONE_HOUR;
 
 /**
  * Created by s.ivanov on 30.05.2022.
@@ -40,7 +45,7 @@ public class CandlesAnalyzerTest {
 
         Instrument instrument = testHelper.getRandomInstrument();
 
-        LocalDateTime yesterday = LocalDateTime.now().minusDays(1).truncatedTo(MINUTES);
+        LocalDateTime yesterday = LocalDateTime.now(UTC).minusDays(1).truncatedTo(MINUTES);
 
         // 7     8     9     10    11    12    13    14    15
         // 200 - 202 - 204 - 206 - 208 - 210 - 212 - 214 - 216
@@ -51,7 +56,7 @@ public class CandlesAnalyzerTest {
 
         PriceCrossedTheValueCheckingResults results = candlesAnalyzer
                 .checkPriceCrossedTheValue(instrument, ONE_HOUR, yesterday.withHour(1).withMinute(0),
-                        LocalDateTime.now(), true, BigDecimal.valueOf(300));
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(300));
 
         assertNull(results.getCrossCandle());
 
@@ -59,7 +64,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValue(instrument, ONE_HOUR, yesterday.withHour(1).withMinute(0),
-                        LocalDateTime.now(), true, BigDecimal.valueOf(100));
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(100));
 
         assertEquals(7, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -68,7 +73,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValue(instrument, ONE_HOUR, yesterday.withHour(1).withMinute(0),
-                        LocalDateTime.now(), true, BigDecimal.valueOf(206));
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(206));
 
         assertEquals(9, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -80,7 +85,7 @@ public class CandlesAnalyzerTest {
 
         Instrument instrument = testHelper.getRandomInstrument();
 
-        LocalDateTime yesterday = LocalDateTime.now().minusDays(1).truncatedTo(MINUTES);
+        LocalDateTime yesterday = LocalDateTime.now(UTC).minusDays(1).truncatedTo(MINUTES);
 
         generateCandles(instrument, yesterday, 200, 198, 196, 194, 192, 190, 188, 186, 184);
 
@@ -91,7 +96,7 @@ public class CandlesAnalyzerTest {
 
         PriceCrossedTheValueCheckingResults results = candlesAnalyzer
                 .checkPriceCrossedTheValue(instrument, ONE_HOUR, yesterday.withHour(1).withMinute(0),
-                        LocalDateTime.now(), false, BigDecimal.valueOf(100));
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(100));
 
         assertNull(results.getCrossCandle());
 
@@ -99,7 +104,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValue(instrument, ONE_HOUR, yesterday.withHour(1).withMinute(0),
-                        LocalDateTime.now(), false, BigDecimal.valueOf(300));
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(300));
 
         assertEquals(7, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -108,7 +113,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValue(instrument, ONE_HOUR, yesterday.withHour(1).withMinute(0),
-                        LocalDateTime.now(), false, BigDecimal.valueOf(194));
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(194));
 
         assertEquals(9, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -129,7 +134,8 @@ public class CandlesAnalyzerTest {
                     BigDecimal.valueOf(vals[i]),
                     BigDecimal.valueOf(vals[i + 1]),
                     100000,
-                    true));
+                    true,
+                    IMPORTER));
         }
     }
 
@@ -139,7 +145,7 @@ public class CandlesAnalyzerTest {
 
         Instrument instrument = testHelper.getRandomInstrument();
 
-        LocalDateTime date = LocalDateTime.now().minusDays(30).truncatedTo(DAYS);
+        LocalDateTime date = LocalDateTime.now(UTC).minusDays(30).truncatedTo(DAYS);
 
         // проверяемое значение = 300, свечей, преодолевающих такую цену - нет
 
@@ -147,7 +153,7 @@ public class CandlesAnalyzerTest {
 
         PriceCrossedTheValueWithRetestCheckingResults results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(300), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(300), TWO);
 
         assertNull(results.getCrossCandle());
         assertNull(results.getLastRetestCandle());
@@ -161,7 +167,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(200), TWO);
 
         assertNull(results.getCrossCandle());
         assertNull(results.getLastRetestCandle());
@@ -175,7 +181,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -192,7 +198,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -208,7 +214,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -227,7 +233,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(200), TWO);
 
         assertNull(results.getCrossCandle());
         assertNull(results.getLastRetestCandle());
@@ -242,7 +248,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -261,7 +267,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), true, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), true, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -280,7 +286,7 @@ public class CandlesAnalyzerTest {
 
         Instrument instrument = testHelper.getRandomInstrument();
 
-        LocalDateTime date = LocalDateTime.now().minusDays(30).truncatedTo(DAYS);
+        LocalDateTime date = LocalDateTime.now(UTC).minusDays(30).truncatedTo(DAYS);
 
         // проверяемое значение = 300, свечей, преодолевающих такую цену - нет
 
@@ -288,7 +294,7 @@ public class CandlesAnalyzerTest {
 
         PriceCrossedTheValueWithRetestCheckingResults results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(100), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(100), TWO);
 
         assertNull(results.getCrossCandle());
         assertNull(results.getLastRetestCandle());
@@ -302,7 +308,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(200), TWO);
 
         assertNull(results.getCrossCandle());
         assertNull(results.getLastRetestCandle());
@@ -316,7 +322,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -333,7 +339,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -349,7 +355,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -368,7 +374,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(200), TWO);
 
         assertNull(results.getCrossCandle());
         assertNull(results.getLastRetestCandle());
@@ -383,7 +389,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -402,7 +408,7 @@ public class CandlesAnalyzerTest {
 
         results = candlesAnalyzer
                 .checkPriceCrossedTheValueWithRetest(instrument, ONE_HOUR, date,
-                        LocalDateTime.now(), false, BigDecimal.valueOf(200), TWO);
+                        LocalDateTime.now(UTC), false, BigDecimal.valueOf(200), TWO);
 
         assertEquals(8, results.getCrossCandle().getCloseDate().getHour());
         assertEquals(59, results.getCrossCandle().getCloseDate().getMinute());
@@ -421,7 +427,7 @@ public class CandlesAnalyzerTest {
 
         Instrument instrument = testHelper.getRandomInstrument();
 
-        LocalDateTime date = LocalDateTime.now().minusDays(1).truncatedTo(DAYS);
+        LocalDateTime date = LocalDateTime.now(UTC).minusDays(1).truncatedTo(DAYS);
 
         generateCandles(instrument, date, 196, 198, 200, 202, 204, 206, 208, 210, 212);
 

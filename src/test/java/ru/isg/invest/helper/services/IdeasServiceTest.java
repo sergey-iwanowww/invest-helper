@@ -4,26 +4,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.isg.invest.helper.dto.IdeaDto;
-import ru.isg.invest.helper.dto.IdeaRequest;
-import ru.isg.invest.helper.dto.IdeaTriggerData;
-import ru.isg.invest.helper.model.Author;
-import ru.isg.invest.helper.model.IdeaStatuses;
-import ru.isg.invest.helper.model.IdeaTriggerStatuses;
-import ru.isg.invest.helper.model.Instrument;
-import ru.isg.invest.helper.model.Source;
-import ru.isg.invest.helper.model.Tag;
+import ru.isg.invest.helper.application.dtos.IdeaDto;
+import ru.isg.invest.helper.application.dtos.IdeaRequest;
+import ru.isg.invest.helper.application.dtos.IdeaTriggerData;
+import ru.isg.invest.helper.application.services.IdeasService;
+import ru.isg.invest.helper.domain.model.Author;
+import ru.isg.invest.helper.domain.model.IdeaStatuses;
+import ru.isg.invest.helper.domain.model.IdeaTriggerStatuses;
+import ru.isg.invest.helper.domain.model.Instrument;
+import ru.isg.invest.helper.domain.model.Source;
+import ru.isg.invest.helper.domain.model.Tag;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static ru.isg.invest.helper.model.IdeaConceptTypes.FALL;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
+import static ru.isg.invest.helper.domain.model.IdeaConceptTypes.FALL;
+import static ru.isg.invest.helper.domain.model.TimeFrames.ONE_HOUR;
 
 /**
  * Created by s.ivanov on 30.05.2022.
@@ -58,9 +60,9 @@ public class IdeasServiceTest {
                         .setWithRetest(true)
                         .setMonitoringTimeFrame(ONE_HOUR))
                 .setFinishTrigger(new IdeaTriggerData()
-                        .setDate(LocalDateTime.now().plusDays(1))
+                        .setDate(LocalDateTime.now(UTC).plusDays(1))
                         .setMonitoringTimeFrame(ONE_HOUR))
-                .setGeneratedDate(LocalDateTime.now().minusMinutes(1))
+                .setGeneratedDate(LocalDateTime.now(UTC).minusMinutes(1))
                 .setInstrumentId(instrument.getId())
                 .setText("тест текст")
                 .setTagIds(tags.stream()

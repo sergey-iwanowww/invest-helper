@@ -5,16 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
-import ru.isg.invest.helper.dto.IdeaDto;
-import ru.isg.invest.helper.dto.IdeaRequest;
-import ru.isg.invest.helper.dto.IdeaTriggerData;
-import ru.isg.invest.helper.model.Author;
-import ru.isg.invest.helper.model.DateIdeaTrigger;
-import ru.isg.invest.helper.model.IdeaConceptTypes;
-import ru.isg.invest.helper.model.IdeaStatuses;
-import ru.isg.invest.helper.model.Instrument;
-import ru.isg.invest.helper.model.PriceIdeaTrigger;
-import ru.isg.invest.helper.model.Source;
+import ru.isg.invest.helper.application.dtos.IdeaDto;
+import ru.isg.invest.helper.application.dtos.IdeaRequest;
+import ru.isg.invest.helper.application.dtos.IdeaTriggerData;
+import ru.isg.invest.helper.application.services.IdeasChecker;
+import ru.isg.invest.helper.application.services.IdeasService;
+import ru.isg.invest.helper.application.services.TriggerActivationNeededResults;
+import ru.isg.invest.helper.application.services.TriggersChecker;
+import ru.isg.invest.helper.domain.model.Author;
+import ru.isg.invest.helper.domain.model.DateIdeaTrigger;
+import ru.isg.invest.helper.domain.model.IdeaConceptTypes;
+import ru.isg.invest.helper.domain.model.IdeaStatuses;
+import ru.isg.invest.helper.domain.model.Instrument;
+import ru.isg.invest.helper.domain.model.PriceIdeaTrigger;
+import ru.isg.invest.helper.domain.model.Source;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,20 +26,21 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static java.math.BigDecimal.TEN;
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
-import static ru.isg.invest.helper.model.IdeaConceptTypes.FALL;
-import static ru.isg.invest.helper.model.IdeaConceptTypes.RISE;
-import static ru.isg.invest.helper.model.IdeaStatuses.ACTIVE;
-import static ru.isg.invest.helper.model.IdeaStatuses.FINISHED;
-import static ru.isg.invest.helper.model.IdeaTriggerStatuses.ACTIVATED;
-import static ru.isg.invest.helper.model.IdeaTriggerStatuses.NEW;
-import static ru.isg.invest.helper.model.IdeaTriggerStatuses.WAITING_FOR_ACTIVATION;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
+import static ru.isg.invest.helper.domain.model.IdeaConceptTypes.FALL;
+import static ru.isg.invest.helper.domain.model.IdeaConceptTypes.RISE;
+import static ru.isg.invest.helper.domain.model.IdeaStatuses.ACTIVE;
+import static ru.isg.invest.helper.domain.model.IdeaStatuses.FINISHED;
+import static ru.isg.invest.helper.domain.model.IdeaTriggerStatuses.ACTIVATED;
+import static ru.isg.invest.helper.domain.model.IdeaTriggerStatuses.NEW;
+import static ru.isg.invest.helper.domain.model.IdeaTriggerStatuses.WAITING_FOR_ACTIVATION;
+import static ru.isg.invest.helper.domain.model.TimeFrames.ONE_HOUR;
 
 /**
  * Created by s.ivanov on 30.05.2022.
@@ -98,7 +103,7 @@ public class IdeasCheckerTest {
                 })))
                 .thenReturn(new TriggerActivationNeededResults(false, null, null));
 
-        LocalDateTime curDate = LocalDateTime.now();
+        LocalDateTime curDate = LocalDateTime.now(UTC);
         LocalDateTime yesterdayBegOfDay = curDate.minusDays(1).truncatedTo(ChronoUnit.DAYS);
 
         LocalDateTime triggerActivationDate = yesterdayBegOfDay.withHour(10);
@@ -209,7 +214,7 @@ public class IdeasCheckerTest {
                 })))
                 .thenReturn(new TriggerActivationNeededResults(false, null, null));
 
-        LocalDateTime curDate = LocalDateTime.now();
+        LocalDateTime curDate = LocalDateTime.now(UTC);
         LocalDateTime yesterdayBegOfDay = curDate.minusDays(1).truncatedTo(ChronoUnit.DAYS);
 
         LocalDateTime triggerActivationDate = yesterdayBegOfDay.withHour(10);

@@ -2,14 +2,14 @@ package ru.isg.invest.helper.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.isg.invest.helper.model.Author;
-import ru.isg.invest.helper.model.Instrument;
-import ru.isg.invest.helper.model.Source;
-import ru.isg.invest.helper.model.Tag;
-import ru.isg.invest.helper.repositories.AuthorRepository;
-import ru.isg.invest.helper.repositories.InstrumentRepository;
-import ru.isg.invest.helper.repositories.SourceRepository;
-import ru.isg.invest.helper.repositories.TagRepository;
+import ru.isg.invest.helper.domain.model.Author;
+import ru.isg.invest.helper.domain.model.Instrument;
+import ru.isg.invest.helper.domain.model.Source;
+import ru.isg.invest.helper.domain.model.Tag;
+import ru.isg.invest.helper.infrastructure.repositories.AuthorRepository;
+import ru.isg.invest.helper.infrastructure.repositories.InstrumentRepository;
+import ru.isg.invest.helper.infrastructure.repositories.SourceRepository;
+import ru.isg.invest.helper.infrastructure.repositories.TagRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static ru.isg.invest.helper.model.Currencies.RUB;
-import static ru.isg.invest.helper.model.InstrumentTypes.STOCK;
-import static ru.isg.invest.helper.model.SourceTypes.TELEGRAM;
+import static ru.isg.invest.helper.domain.model.Currencies.RUB;
+import static ru.isg.invest.helper.domain.model.InstrumentTypes.STOCK;
+import static ru.isg.invest.helper.domain.model.SourceTypes.TELEGRAM;
 
 /**
  * Created by s.ivanov on 31.05.2022.

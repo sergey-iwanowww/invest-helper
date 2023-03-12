@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.isg.invest.helper.model.Instrument;
-import ru.isg.invest.helper.repositories.OperationRepository;
-import ru.isg.invest.helper.repositories.PortfolioRepository;
-import ru.isg.invest.helper.repositories.PositionRepository;
+import ru.isg.invest.helper.application.services.TinkoffOperationsImporter;
+import ru.isg.invest.helper.domain.model.Instrument;
+import ru.isg.invest.helper.infrastructure.repositories.OperationRepository;
+import ru.isg.invest.helper.infrastructure.repositories.PortfolioRepository;
+import ru.isg.invest.helper.infrastructure.repositories.PositionRepository;
 
 import java.util.Objects;
 import java.util.Set;

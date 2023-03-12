@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import ru.isg.invest.helper.dto.IdeaDto;
-import ru.isg.invest.helper.dto.IdeaRequest;
-import ru.isg.invest.helper.services.IdeasService;
+import ru.isg.invest.helper.application.dtos.IdeaDto;
+import ru.isg.invest.helper.application.dtos.IdeaRequest;
+import ru.isg.invest.helper.application.services.IdeasService;
 
 import javax.validation.Valid;
 import java.io.IOException;

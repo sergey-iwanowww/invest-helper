@@ -4,27 +4,31 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.isg.invest.helper.model.Candle;
-import ru.isg.invest.helper.model.CandlesImportTask;
-import ru.isg.invest.helper.model.Instrument;
-import ru.isg.invest.helper.model.MonitoredCandle;
-import ru.isg.invest.helper.model.TradingDay;
-import ru.isg.invest.helper.repositories.CandleRepository;
-import ru.isg.invest.helper.repositories.CandlesImportTaskRepository;
-import ru.isg.invest.helper.repositories.MonitoredInstrumentRepository;
-import ru.isg.invest.helper.repositories.TradingDayRepository;
+import ru.isg.invest.helper.application.services.MonitoredCandlesChecker;
+import ru.isg.invest.helper.application.services.TimeFrameUtils;
+import ru.isg.invest.helper.domain.model.Candle;
+import ru.isg.invest.helper.domain.model.CandlesImportTask;
+import ru.isg.invest.helper.domain.model.Instrument;
+import ru.isg.invest.helper.domain.model.MonitoredCandle;
+import ru.isg.invest.helper.domain.model.TradingDay;
+import ru.isg.invest.helper.infrastructure.repositories.CandleRepository;
+import ru.isg.invest.helper.infrastructure.repositories.CandlesImportTaskRepository;
+import ru.isg.invest.helper.infrastructure.repositories.MonitoredInstrumentRepository;
+import ru.isg.invest.helper.infrastructure.repositories.TradingDayRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
+import static ru.isg.invest.helper.domain.model.CandleSources.IMPORTER;
+import static ru.isg.invest.helper.domain.model.TimeFrames.ONE_HOUR;
 
 /**
  * Created by s.ivanov on 30.05.2022.
@@ -55,7 +59,8 @@ public class MonitoredCandlesCheckerTest {
 
         Instrument instr0 = instrs.get(0);
 
-        CandlesImportTask existsTask = new CandlesImportTask(instr0, ONE_HOUR, LocalDateTime.now(), LocalDateTime.now());
+        CandlesImportTask existsTask = new CandlesImportTask(instr0, ONE_HOUR, LocalDateTime.now(UTC),
+                LocalDateTime.now(UTC), true);
         existsTask.processingStarted();
         candlesImportTaskRepository.save(existsTask);
 
@@ -71,9 +76,9 @@ public class MonitoredCandlesCheckerTest {
 
         Instrument instr2 = instrs.get(2);
 
-        LocalDateTime prevHour = LocalDateTime.now().minusHours(1).truncatedTo(HOURS);
+        LocalDateTime prevHour = LocalDateTime.now(UTC).minusHours(1).truncatedTo(HOURS);
         Candle instr2PrevCandle = candleRepository.save(new Candle(instr2, ONE_HOUR, prevHour, ZERO, ZERO, ZERO, ZERO,
-                0, false));
+                0, false, IMPORTER));
 
         monitoredInstrumentRepository.save(new MonitoredCandle(instr2, ONE_HOUR));
 
@@ -82,13 +87,13 @@ public class MonitoredCandlesCheckerTest {
 
         Instrument instr3 = instrs.get(3);
 
-        tradingDayRepository.save(new TradingDay(instr3.getExchange(), LocalDate.now(), true,
-                LocalDateTime.now().minusHours(2).truncatedTo(HOURS),
-                LocalDateTime.now().minusHours(2).truncatedTo(HOURS)));
+        tradingDayRepository.save(new TradingDay(instr3.getExchange(), LocalDate.now(UTC), true,
+                LocalDateTime.now(UTC).minusHours(2).truncatedTo(HOURS),
+                LocalDateTime.now(UTC).minusHours(2).truncatedTo(HOURS)));
 
-        prevHour = LocalDateTime.now().minusHours(4).truncatedTo(HOURS);
+        prevHour = LocalDateTime.now(UTC).minusHours(4).truncatedTo(HOURS);
         Candle instr3PrevCandle = candleRepository.save(new Candle(instr3, ONE_HOUR, prevHour, ZERO, ZERO, ZERO, ZERO,
-                0, true));
+                0, true, IMPORTER));
 
         monitoredInstrumentRepository.save(new MonitoredCandle(instr3, ONE_HOUR));
 
@@ -97,11 +102,11 @@ public class MonitoredCandlesCheckerTest {
 
         Instrument instr4 = instrs.get(4);
 
-        tradingDayRepository.save(new TradingDay(instr4.getExchange(), LocalDate.now(), false,
-                LocalDateTime.now().truncatedTo(DAYS), LocalDateTime.now().truncatedTo(DAYS)));
+        tradingDayRepository.save(new TradingDay(instr4.getExchange(), LocalDate.now(UTC), false,
+                LocalDateTime.now(UTC).truncatedTo(DAYS), LocalDateTime.now(UTC).truncatedTo(DAYS)));
 
-        prevHour = LocalDateTime.now().minusHours(4).truncatedTo(HOURS);
-        candleRepository.save(new Candle(instr4, ONE_HOUR, prevHour, ZERO, ZERO, ZERO, ZERO, 0, true));
+        prevHour = LocalDateTime.now(UTC).minusHours(4).truncatedTo(HOURS);
+        candleRepository.save(new Candle(instr4, ONE_HOUR, prevHour, ZERO, ZERO, ZERO, ZERO, 0, true, IMPORTER));
 
         monitoredInstrumentRepository.save(new MonitoredCandle(instr4, ONE_HOUR));
 

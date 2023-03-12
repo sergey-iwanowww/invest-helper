@@ -7,18 +7,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.isg.invest.helper.dto.CreateInstrumentRequest;
-import ru.isg.invest.helper.dto.InstrumentDto;
-import ru.isg.invest.helper.repositories.InstrumentRepository;
-import ru.isg.invest.helper.services.CandlesImporter;
-import ru.isg.invest.helper.services.IdeasChecker;
-import ru.isg.invest.helper.services.InstrumentService;
+import ru.isg.invest.helper.application.dtos.CreateInstrumentRequest;
+import ru.isg.invest.helper.application.dtos.InstrumentDto;
+import ru.isg.invest.helper.infrastructure.repositories.InstrumentRepository;
+import ru.isg.invest.helper.application.services.CandlesImporter;
+import ru.isg.invest.helper.application.services.IdeasChecker;
+import ru.isg.invest.helper.application.services.InstrumentService;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static ru.isg.invest.helper.model.TimeFrames.ONE_HOUR;
 
 /**
  * Created by s.ivanov on 14.11.2021.
