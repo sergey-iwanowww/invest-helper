@@ -31,7 +31,7 @@ public class CandlesAnalyzer {
 
     public Optional<BigDecimal> getLastPrice(Instrument instrument, TimeFrames timeFrame, LocalDateTime date) {
         return candleRepository
-                .getCandles1(instrument.getId(), timeFrame, date).stream()
+                .getCandlesByOpenDate(instrument.getId(), timeFrame, date).stream()
                 .sorted(Comparator.comparing(Candle::getOpenDate).reversed())
                 .limit(1)
                 .findAny()
@@ -42,7 +42,7 @@ public class CandlesAnalyzer {
             LocalDateTime dateFrom, LocalDateTime dateTo, boolean rise, BigDecimal value) {
 
         List<Candle> candles = candleRepository
-                .getCandlesNew(instrument.getId(), timeFrame, dateFrom, dateTo).stream()
+                .getCandlesByCloseDate(instrument.getId(), timeFrame, dateFrom, dateTo).stream()
                 .sorted(Comparator.comparing(Candle::getOpenDate))
                 .collect(Collectors.toList());
 
@@ -60,7 +60,7 @@ public class CandlesAnalyzer {
             LocalDateTime dateFrom, LocalDateTime dateTo, boolean rise, BigDecimal value, BigDecimal delta) {
 
         List<Candle> candles = candleRepository
-                .getCandlesNew(instrument.getId(), timeFrame, dateFrom, dateTo).stream()
+                .getCandlesByCloseDate(instrument.getId(), timeFrame, dateFrom, dateTo).stream()
                 .sorted(Comparator.comparing(Candle::getOpenDate))
                 .collect(Collectors.toList());
 

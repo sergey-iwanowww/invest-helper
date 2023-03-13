@@ -33,16 +33,16 @@ public class PriceIdeaTrigger extends IdeaTrigger {
         this.monitoringTimeFrame = monitoringTimeFrame != null ? monitoringTimeFrame : ONE_HOUR;
     }
 
-    @Column(nullable = false)
+    @Column
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column
     private BigDecimal delta = BigDecimal.ZERO;
 
-    @Column(nullable = false)
+    @Column
     private boolean withRetest;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(STRING)
     private TimeFrames monitoringTimeFrame;
 

@@ -1,9 +1,18 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:55432/investtest
-    driver-class-name: org.postgresql.Driver
-    username: invest
-    password: invest
+    url: jdbc:h2:mem:tetsdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+  sql:
+    init:
+      mode: never
+  flyway:
+    enabled: false
 
 logging:
   level:

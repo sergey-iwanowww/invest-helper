@@ -18,9 +18,14 @@ pf-man:
 
 tinkoff:
   api:
-    token:
+    token: 123
 
 telegram:
   bot:
     username: Investment Storyteller
-    token:
+    token: 123
+
+tinkoff-api:
+  url: https://api-invest.tinkoff.ru
+  path: /openapi/sandbox
+  token: 123

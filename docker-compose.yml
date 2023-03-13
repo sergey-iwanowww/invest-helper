@@ -11,8 +11,7 @@ services:
     networks:
       - invest
     volumes:
-      - ./deploy/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ../../../front/invest-console/build:/usr/share/nginx/html/invest-console:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
   invest-db:
     image: postgres:14.3-alpine
@@ -24,8 +23,6 @@ services:
     environment:
       POSTGRES_USER: invest
       POSTGRES_PASSWORD: invest
-    volumes:
-      - "./deploy/invest-db:/var/lib/postgresql/data"
     networks:
       - invest
 

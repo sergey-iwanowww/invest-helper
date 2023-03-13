@@ -45,7 +45,7 @@ public abstract class IdeaTrigger {
 
     @Setter
     @OneToOne
-    @JoinColumn(name = "idea_id", nullable = false)
+    @JoinColumn(name = "idea_id")
     protected Idea idea;
 
     @Column(nullable = false)

@@ -26,7 +26,7 @@ public class DateIdeaTrigger extends IdeaTrigger {
         this.date = date;
     }
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime date;
 
     @Override

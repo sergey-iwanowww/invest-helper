@@ -43,6 +43,7 @@ dependencies {
 
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok';
+    testImplementation 'com.h2database:h2'
 
     implementation 'org.telegram:telegrambots:6.0.1'
 }

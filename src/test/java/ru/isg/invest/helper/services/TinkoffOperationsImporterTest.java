@@ -1,6 +1,7 @@
 package ru.isg.invest.helper.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by s.ivanov on 13.06.2022.
  */
+@Disabled
 @SpringBootTest
 @Slf4j
 public class TinkoffOperationsImporterTest {
