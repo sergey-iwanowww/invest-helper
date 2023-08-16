@@ -10,6 +10,8 @@ Service provides http API to manage the set of ideas.
 
 The source of reference data is The Tinkoff Investments API.
 
+Spring Data JPA, PostgreSQL, Flyway are used.
+
 ## Building invest-helper
 
 To build, run:
